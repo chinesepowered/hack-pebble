@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Capy Crew</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: #FFF6EA; }
+  svg { display: block; }
+  .title { font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 60px; fill: #5A3820; }
+  .tag   { font-family: 'Fredoka', sans-serif; font-weight: 400; font-size: 26px; fill: #8C6650; }
+  .name  { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 28px; fill: #5A3820; }
+  .role  { font-family: 'Fredoka', sans-serif; font-weight: 400; font-size: 19px; fill: #8C6650; }
+  .pill  { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 16px; fill: #fff; letter-spacing: .4px; }
+</style>
+</head>
+<body>
+<svg id="crew" width="1200" height="680" viewBox="0 0 1200 680" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Base capybara (front view): loaf body, long boxy head, big snout, tiny ears, high eyes. -->
+    <g id="capy">
+      <ellipse cx="150" cy="272" rx="118" ry="80" fill="#B07A50"/>
+      <ellipse cx="150" cy="292" rx="70" ry="52" fill="#C4936A"/>
+      <ellipse cx="94" cy="58" rx="15" ry="12" fill="#8A5634"/>
+      <ellipse cx="94" cy="60" rx="7.5" ry="5.5" fill="#64391F"/>
+      <ellipse cx="206" cy="58" rx="15" ry="12" fill="#8A5634"/>
+      <ellipse cx="206" cy="60" rx="7.5" ry="5.5" fill="#64391F"/>
+      <rect x="72" y="48" width="156" height="196" rx="64" fill="#B98258"/>
+      <rect x="84" y="128" width="132" height="108" rx="50" fill="#A26D46"/>
+      <rect x="113" y="140" width="74" height="26" rx="13" fill="#3D2518"/>
+      <ellipse cx="129" cy="147" rx="8" ry="3" fill="#6A4532"/>
+      <path d="M150 166 L150 186" stroke="#3D2518" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M134 188 Q150 201 166 188" stroke="#3D2518" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+      <circle cx="112" cy="102" r="7.5" fill="#2A1910"/>
+      <circle cx="188" cy="102" r="7.5" fill="#2A1910"/>
+      <circle cx="114.5" cy="99.5" r="2.5" fill="#fff"/>
+      <circle cx="190.5" cy="99.5" r="2.5" fill="#fff"/>
+      <ellipse cx="97" cy="200" rx="13" ry="8" fill="#F49A9A" opacity=".65"/>
+      <ellipse cx="203" cy="200" rx="13" ry="8" fill="#F49A9A" opacity=".65"/>
+    </g>
+    <g id="yuzu">
+      <path d="M0 -21 C 6 -38, 26 -40, 34 -31 C 24 -20, 9 -18, 0 -21 Z" fill="#62B35A"/>
+      <circle cx="0" cy="0" r="23" fill="#FFC23D" stroke="#E9A21C" stroke-width="3"/>
+      <circle cx="-8" cy="-7" r="5.5" fill="#FFE08A"/>
+      <path d="M0 -22 L -2 -29" stroke="#6B4A2A" stroke-width="3" stroke-linecap="round"/>
+    </g>
+  </defs>
+
+  <text class="title" x="600" y="80" text-anchor="middle">The Capy Crew</text>
+  <text class="tag" x="600" y="122" text-anchor="middle">Very calm agents that do one real job for you.</text>
+
+  <!-- 1. Capy Reader: glasses + phone -->
+  <g transform="translate(0,140)">
+    <use href="#capy"/>
+    <circle cx="112" cy="102" r="19" fill="#fff" fill-opacity=".22" stroke="#4A3F6B" stroke-width="4.5"/>
+    <circle cx="188" cy="102" r="19" fill="#fff" fill-opacity=".22" stroke="#4A3F6B" stroke-width="4.5"/>
+    <path d="M131 99 Q150 90 169 99" stroke="#4A3F6B" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <rect x="126" y="250" width="48" height="68" rx="10" fill="#4A3F6B"/>
+    <rect x="131" y="257" width="38" height="52" rx="6" fill="#CFEAFF"/>
+    <rect x="135" y="263" width="24" height="9" rx="4.5" fill="#fff"/>
+    <rect x="141" y="277" width="24" height="9" rx="4.5" fill="#FFD36B"/>
+    <rect x="135" y="291" width="18" height="9" rx="4.5" fill="#fff"/>
+    <ellipse cx="126" cy="300" rx="13" ry="11" fill="#A8734C"/>
+    <ellipse cx="174" cy="300" rx="13" ry="11" fill="#A8734C"/>
+  </g>
+
+  <!-- 2. Capy Detective: magnifying glass -->
+  <g transform="translate(300,140)">
+    <use href="#capy"/>
+    <ellipse cx="60" cy="290" rx="15" ry="24" fill="#A8734C" transform="rotate(18 60 290)"/>
+    <ellipse cx="248" cy="276" rx="15" ry="25" fill="#A8734C" transform="rotate(-28 248 276)"/>
+    <line x1="252" y1="238" x2="270" y2="268" stroke="#6B5444" stroke-width="11" stroke-linecap="round"/>
+    <circle cx="238" cy="212" r="30" fill="#E3F4FF" fill-opacity=".6" stroke="#6B5444" stroke-width="7"/>
+    <path d="M221 200 Q227 188 241 186" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="264" cy="258" rx="13" ry="12" fill="#A8734C"/>
+  </g>
+
+  <!-- 3. Elder Capy: beanie, bushy brows, memory book -->
+  <g transform="translate(600,140)">
+    <use href="#capy"/>
+    <path d="M78 74 C 78 6, 222 6, 222 74 Z" fill="#7BA6D8"/>
+    <rect x="70" y="62" width="160" height="22" rx="11" fill="#5E8CC6"/>
+    <g stroke="#7BA6D8" stroke-width="3" stroke-linecap="round">
+      <line x1="88" y1="67" x2="88" y2="79"/><line x1="106" y1="67" x2="106" y2="79"/>
+      <line x1="124" y1="67" x2="124" y2="79"/><line x1="142" y1="67" x2="142" y2="79"/>
+      <line x1="160" y1="67" x2="160" y2="79"/><line x1="178" y1="67" x2="178" y2="79"/>
+      <line x1="196" y1="67" x2="196" y2="79"/><line x1="214" y1="67" x2="214" y2="79"/>
+    </g>
+    <circle cx="150" cy="16" r="14" fill="#fff" stroke="#E6E0D8" stroke-width="2"/>
+    <path d="M100 92 Q112 84 124 92" stroke="#F3EEE6" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M176 92 Q188 84 200 92" stroke="#F3EEE6" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <rect x="118" y="252" width="64" height="54" rx="6" fill="#D9614C"/>
+    <rect x="118" y="252" width="9" height="54" rx="3" fill="#B84A38"/>
+    <rect x="133" y="260" width="42" height="38" rx="4" fill="#FBE3C2"/>
+    <g stroke="#5E8CC6" stroke-width="2.5"><line x1="143" y1="286" x2="155" y2="268"/><line x1="155" y1="268" x2="166" y2="287"/><line x1="143" y1="286" x2="166" y2="287"/></g>
+    <circle cx="143" cy="286" r="4.5" fill="#5E8CC6"/><circle cx="155" cy="268" r="4.5" fill="#5E8CC6"/><circle cx="166" cy="287" r="4.5" fill="#5E8CC6"/>
+    <ellipse cx="118" cy="296" rx="13" ry="11" fill="#A8734C"/>
+    <ellipse cx="182" cy="296" rx="13" ry="11" fill="#A8734C"/>
+  </g>
+
+  <!-- 4. Capy Guardian: yuzu + shield -->
+  <g transform="translate(900,140)">
+    <use href="#capy"/>
+    <use href="#yuzu" transform="translate(150,38)"/>
+    <path d="M150 250 L190 262 L186 300 Q182 322 150 336 Q118 322 114 300 L110 262 Z" fill="#4DB384" stroke="#2E8B61" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M131 293 L146 308 L171 277" stroke="#fff" stroke-width="9" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <ellipse cx="111" cy="298" rx="13" ry="11" fill="#A8734C"/>
+    <ellipse cx="189" cy="298" rx="13" ry="11" fill="#A8734C"/>
+  </g>
+
+  <!-- steam -->
+  <g stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".9">
+    <path d="M300 455 c -12 -14 12 -26 0 -40 c -12 -14 12 -26 0 -40"/>
+    <path d="M600 455 c -12 -14 12 -26 0 -40 c -12 -14 12 -26 0 -40"/>
+    <path d="M900 455 c -12 -14 12 -26 0 -40 c -12 -14 12 -26 0 -40"/>
+  </g>
+
+  <!-- hot spring water (wave path built below) -->
+  <path id="water" fill="#9ED8E6"/>
+  <path id="wave" fill="none" stroke="#D6F2F8" stroke-width="6" stroke-linecap="round"/>
+  <g fill="#D6F2F8">
+    <circle cx="210" cy="512" r="6"/><circle cx="228" cy="526" r="4"/>
+    <circle cx="520" cy="518" r="5"/><circle cx="790" cy="510" r="6"/><circle cx="806" cy="524" r="3.5"/>
+    <circle cx="1080" cy="516" r="5"/>
+  </g>
+
+  <!-- labels -->
+  <g id="labels"></g>
+
+  <script><![CDATA[
+    (() => {
+      const waterTop = 466, x0 = 20, x1 = 1180, seg = 58, amp = 11;
+      let d = `M${x0} ${waterTop} Q${x0 + seg / 2} ${waterTop - amp} ${x0 + seg} ${waterTop}`;
+      for (let x = x0 + 2 * seg; x <= x1; x += seg) d += ` T${x} ${waterTop}`;
+      document.getElementById('wave').setAttribute('d', d);
+      document.getElementById('water').setAttribute('d',
+        d + ` L${x1} 520 Q${x1} 560 ${x1 - 40} 560 L${x0 + 40} 560 Q${x0} 560 ${x0} 520 Z`);
+
+      const crew = [
+        ['Capy Reader', 'reads & sorts everything', 'SIE', '#8C6CE0'],
+        ['Capy Detective', 'checks it against the real web', 'Keenable', '#E2894A'],
+        ['Elder Capy', 'remembers everything about you', 'Cognee', '#4F8FD6'],
+        ['Capy Guardian', 'decides, then checks with you', 'Band', '#3FAE7A'],
+      ];
+      const NS = 'http://www.w3.org/2000/svg', g = document.getElementById('labels');
+      const el = (tag, attrs, text) => {
+        const e = document.createElementNS(NS, tag);
+        for (const k in attrs) e.setAttribute(k, attrs[k]);
+        if (text) e.textContent = text;
+        g.appendChild(e);
+        return e;
+      };
+      crew.forEach(([name, role, pill, color], i) => {
+        const cx = 150 + 300 * i;
+        el('text', { class: 'name', x: cx, y: 600, 'text-anchor': 'middle' }, name);
+        el('text', { class: 'role', x: cx, y: 628, 'text-anchor': 'middle' }, role);
+        const t = el('text', { class: 'pill', x: cx, y: 662, 'text-anchor': 'middle' }, pill);
+        const w = t.getBBox().width + 26;
+        const r = document.createElementNS(NS, 'rect');
+        Object.entries({ x: cx - w / 2, y: 643, width: w, height: 27, rx: 13.5, fill: color })
+          .forEach(([k, v]) => r.setAttribute(k, v));
+        g.insertBefore(r, t);
+      });
+    })();
+  ]]></script>
+</svg>
+</body>
+</html>
