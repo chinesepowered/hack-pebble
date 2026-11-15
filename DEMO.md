@@ -24,6 +24,8 @@
 
 ## Likely questions
 
+The quick answers are below; [FAQ.md](FAQ.md) has the full list.
+
 - **Why SIE instead of one big LLM?** Reading and extraction run on small specialist models (OCR, ASR, GLiNER2), which are fast and cheap per call. The LLM is used only where judgment helps: Cognee's graph building, conflict review, and the brief. Every SIE call and its latency shows in "Under the hood".
 - **How does Cognee know the facts conflict?** Each source is remembered with an `effective_date`. `improve(review_conflicts=True)` compares facts about the same entity and attribute across dated sources and stores a `FactConflict` citing both chunks. The family's choice is saved with `resolve_conflict()` (`resolution_source = user`).
 - **Cognee Cloud?** We ran open-source Cognee so its LLM and embeddings could run on SIE. The same calls map to Cognee Cloud's REST API.

@@ -6,7 +6,7 @@ When an aging parent comes home from the hospital, the family is left reconcilin
 
 ![Cognee flags the lisinopril dose conflict, the family resolves it, and the Cognee graph updates](docs/demo.gif)
 
-📽️ Demo video (2:26): [`demo/capy-care-demo.mp4`](demo/capy-care-demo.mp4) · subtitles [`.srt`](demo/capy-care-demo.srt) · 🗂️ Pitch: [`pitch.pdf`](pitch.pdf) ([HTML](pitch.html)) · 🐹 Mascot: [`brand/capy-crew.png`](brand/capy-crew.png)
+📽️ Demo video (2:26): [`demo/capy-care-demo.mp4`](demo/capy-care-demo.mp4) · subtitles [`.srt`](demo/capy-care-demo.srt) · 🗂️ Pitch: [`pitch.pdf`](pitch.pdf) ([HTML](pitch.html)) · ❓ [FAQ](FAQ.md) · 🎤 [Presenter script](DEMO.md) · 🐹 Mascot: [`brand/capy-crew.png`](brand/capy-crew.png)
 
 ## Sponsors at a glance
 
