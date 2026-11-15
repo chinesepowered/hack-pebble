@@ -7,3 +7,4 @@ __pycache__/
 .vault/
 scratch_tests/
 node_modules/
+!.env.example
