@@ -1,0 +1,162 @@
+1
+00:00:00,800 --> 00:00:07,184
+This is Capy Care: a calm crew of AI agents
+that does one real job for families.
+
+2
+00:00:07,184 --> 00:00:11,014
+It keeps an aging parent's
+medications straight.
+
+3
+00:00:11,864 --> 00:00:17,378
+When Mom comes home from the hospital, her
+discharge papers say lisinopril, 5 mg.
+
+4
+00:00:17,378 --> 00:00:21,463
+Three days later, the new bottle from
+the pharmacy says ten.
+
+5
+00:00:21,463 --> 00:00:22,756
+Which one is right?
+
+6
+00:00:22,756 --> 00:00:23,641
+In one study,
+
+7
+00:00:23,641 --> 00:00:29,836
+two out of three patients left the hospital with a
+discrepancy in their medication records.
+
+8
+00:00:30,686 --> 00:00:33,138
+So we built a team of four capybaras.
+
+9
+00:00:33,138 --> 00:00:36,452
+Capy Reader reads everything
+with Superlinked SIE.
+
+10
+00:00:36,452 --> 00:00:40,760
+Elder Capy remembers every fact, and
+when it happened, in Cognee.
+
+11
+00:00:40,760 --> 00:00:44,803
+Capy Pharmacist checks the official
+drug label with Keenable.
+
+12
+00:00:44,803 --> 00:00:49,442
+And Capy Guardian keeps the family in the
+loop, in a shared Band room.
+
+13
+00:00:50,292 --> 00:00:52,120
+Here it is, running live.
+
+14
+00:00:52,120 --> 00:00:56,871
+Lily shares Mom's discharge papers and
+a photo of the new bottle.
+
+15
+00:00:56,871 --> 00:01:03,011
+SIE reads each one in about a second: docling for
+the PDF, LightOnOCR for the photo,
+
+16
+00:01:03,011 --> 00:01:07,471
+and GLiNER2 pulls out every
+medication and dose, with no LLM.
+
+17
+00:01:07,471 --> 00:01:10,687
+Elder Capy stores each source with its date,
+
+18
+00:01:10,687 --> 00:01:14,854
+and Cognee's conflict review
+catches it: 5 mg versus ten.
+
+19
+00:01:14,854 --> 00:01:19,240
+The Pharmacist reads the real label,
+live, through Keenable.
+
+20
+00:01:19,240 --> 00:01:20,848
+Both doses are normal,
+
+21
+00:01:20,848 --> 00:01:25,819
+so the Guardian asks Lily to call the
+pharmacy before the next dose.
+
+22
+00:01:26,669 --> 00:01:28,698
+Lily calls, and replies: Dr.
+
+23
+00:01:28,698 --> 00:01:31,526
+Alvarez raised the dose on November 10.
+
+24
+00:01:31,526 --> 00:01:36,383
+GLiNER2 reads her answer, and Cognee
+records the family's decision,
+
+25
+00:01:36,383 --> 00:01:38,920
+so it holds on every future review.
+
+26
+00:01:41,270 --> 00:01:46,406
+Then her brother Sam sends a voice note:
+Mom's been dizzy since Wednesday.
+
+27
+00:01:46,406 --> 00:01:49,460
+Whisper on SIE transcribes it in one second.
+
+28
+00:01:49,460 --> 00:01:55,151
+Elder Capy asks Cognee a question about time:
+what changed right before Wednesday?
+
+29
+00:01:55,151 --> 00:01:57,372
+The dose went up the day before.
+
+30
+00:01:57,372 --> 00:02:03,202
+The official label lists dizziness as a common
+side effect, so Qwen, running on SIE,
+
+31
+00:02:03,202 --> 00:02:07,366
+writes a one-page brief with three
+questions for the doctor.
+
+32
+00:02:08,216 --> 00:02:11,641
+Under the hood, SIE senses and
+Cognee remembers.
+
+33
+00:02:11,641 --> 00:02:16,706
+Even Cognee's own language model and
+embeddings run on Superlinked SIE.
+
+34
+00:02:17,556 --> 00:02:19,846
+Capy Care flags, and never advises.
+
+35
+00:02:19,846 --> 00:02:25,210
+A person makes every call, and the family walks
+into the doctor's office prepared.

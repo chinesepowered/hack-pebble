@@ -17,33 +17,43 @@ const niceDate = (iso) => {
   const d = new Date(iso + "T12:00:00");
   return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
 };
-let version = -1, net = null, nodeSet = null, edgeSet = null, seenMsgs = 0, human = "Lily";
+let version = -1, net = null, nodeSet = null, edgeSet = null, human = "Lily";
+let feedIds = [];
+const lastHTML = {};
+// Only touch the DOM when a panel's content really changed, so entry animations don't replay.
+const setHTML = (id, html) => { if (lastHTML[id] !== html) { lastHTML[id] = html; $(id).innerHTML = html; } };
 
 function renderCrew(status) {
-  $("crew").innerHTML = Object.entries(AGENTS).map(([k, a]) => {
+  setHTML("crew", Object.entries(AGENTS).map(([k, a]) => {
     const working = status?.[k] === "working";
     return `<div class="member ${working ? "working" : ""}"><img src="${a.img}" alt="">
       <div><b>${a.name}</b><small>${working ? "working…" : a.role}</small></div></div>`;
-  }).join("");
+  }).join(""));
+}
+
+function messageHTML(m) {
+  if (m.type === "text") {
+    const a = AGENTS[m.agent];
+    const avatar = a ? `<img src="${a.img}" alt="">` : `<div class="human">${esc(human[0])}</div>`;
+    return `<div class="msg ${a ? "" : "me"}">${avatar}<div class="bubble">
+      <div class="who">${esc(a ? a.name : `${human} (you)`)}</div>${md(m.content)}</div></div>`;
+  }
+  const sponsor = m.sponsor || "";
+  const badge = sponsor ? `<span class="badge ${sponsor}">${sponsor}</span>` : `<span class="dot"></span>`;
+  return `<div class="event ${m.type}">${badge}<span>${esc(m.content)}</span></div>`;
 }
 
 function renderFeed(messages) {
   const feed = $("feed");
-  const atBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 80;
-  feed.innerHTML = messages.map((m) => {
-    if (m.type === "text") {
-      const a = AGENTS[m.agent];
-      const me = !a;
-      const avatar = a ? `<img src="${a.img}" alt="">` : `<div class="human">${esc(human[0])}</div>`;
-      return `<div class="msg ${me ? "me" : ""}">${avatar}<div class="bubble">
-        <div class="who">${esc(a ? a.name : `${human} (you)`)}</div>${md(m.content)}</div></div>`;
-    }
-    const sponsor = m.sponsor || "";
-    const badge = sponsor ? `<span class="badge ${sponsor}">${sponsor}</span>` : `<span class="dot"></span>`;
-    return `<div class="event ${m.type}">${badge}<span>${esc(m.content)}</span></div>`;
-  }).join("");
-  if (atBottom || messages.length !== seenMsgs) feed.scrollTop = feed.scrollHeight;
-  seenMsgs = messages.length;
+  const ids = messages.map((m) => m.id);
+  const continues = feedIds.length <= ids.length && feedIds.every((id, i) => id === ids[i]);
+  if (!continues) { feed.innerHTML = ""; feedIds = []; }
+  const fresh = messages.slice(feedIds.length);
+  if (fresh.length) {
+    feed.insertAdjacentHTML("beforeend", fresh.map(messageHTML).join(""));
+    feed.scrollTop = feed.scrollHeight;
+  }
+  feedIds = ids;
 }
 
 function factValue(text) {
@@ -53,7 +63,7 @@ function factValue(text) {
 
 function renderConflict(s) {
   const c = (s.conflicts || []).find((x) => x.attribute === "has_dose");
-  if (!c) { $("conflict").innerHTML = ""; return; }
+  if (!c) { setHTML("conflict", ""); return; }
   const drug = c.about || "medication";
   const rows = [];
   for (const src of s.sources) for (const f of src.facts) if (f.medication === drug) rows.push({ dose: f.dose, src, f });
@@ -70,27 +80,31 @@ function renderConflict(s) {
   const head = byUser ? `✅ Resolved by the family — ${esc(drug)}` : `⚠️ Conflict found by ${finder} — ${esc(drug)} dose`;
   const foot = byUser ? `<small>${esc(c.resolution_reason || "")}</small>`
     : `<small>${waiting ? `Waiting for ${esc(human)} to confirm with the pharmacy · nothing changes until then` : "Checking…"}</small>`;
-  $("conflict").innerHTML = `<div class="conflict ${byUser ? "resolved" : ""}"><h3>${head}</h3><div class="vs">${sides}</div>${foot}</div>`;
+  setHTML("conflict", `<div class="conflict ${byUser ? "resolved" : ""}"><h3>${head}</h3><div class="vs">${sides}</div>${foot}</div>`);
 }
 
 function renderMeds(meds) {
-  if (!meds.length) { $("med-list").innerHTML = `<li class="empty">Share Mom's papers to start.</li>`; return; }
+  if (!meds.length) { setHTML("med-list", `<li class="empty">Share Mom's papers to start.</li>`); return; }
   const label = { needs_confirmation: "needs a human", confirmed: "confirmed by family", ok: "matches all sources", stopped: "stopped" };
-  $("med-list").innerHTML = meds.map((m) => `<li class="med ${m.review}">
+  setHTML("med-list", meds.map((m) => `<li class="med ${m.review}">
       <div><div class="name">${esc(m.medication)}</div>
       <div class="dose">${esc(m.dose)} ${esc(m.frequency || "")}</div>
       <div class="src">${esc((m.source || "").split(" — ")[0])} · ${niceDate(m.date)}</div></div>
-      <span class="chip ${m.review}">${label[m.review]}</span></li>`).join("");
+      <span class="chip ${m.review}">${label[m.review]}</span></li>`).join(""));
 }
 
 function renderTimeline(items) {
-  if (!items.length) { $("timeline").innerHTML = `<li class="empty">Nothing yet.</li>`; return; }
-  $("timeline").innerHTML = items.map((e) => `<li class="ev ${e.kind}"><div class="d">${niceDate(e.date)}</div>
-    <div class="t">${esc(e.title)}</div><div class="x">${esc(e.detail)}</div></li>`).join("");
+  if (!items.length) { setHTML("timeline", `<li class="empty">Nothing yet.</li>`); return; }
+  setHTML("timeline", items.map((e) => `<li class="ev ${e.kind}"><div class="d">${niceDate(e.date)}</div>
+    <div class="t">${esc(e.title)}</div><div class="x">${esc(e.detail)}</div></li>`).join(""));
 }
 
+let lastGraph = "";
 function renderGraph(graph) {
   if (!window.vis) return;
+  const key = JSON.stringify(graph);
+  if (key === lastGraph && net) return;
+  lastGraph = key;
   const nodes = (graph.nodes || []).map((n) => {
     const kind = n.group === "conflict" ? "conflict" : n.group === "date" ? "date" : (n.kind || "default");
     const [bg, fg] = KIND_COLORS[kind] || KIND_COLORS.default;
@@ -102,21 +116,26 @@ function renderGraph(graph) {
   const edges = (graph.edges || []).map((e, i) => ({ id: `${e.from}-${e.to}-${e.label}`, from: e.from, to: e.to,
     label: e.label.replace(/_/g, " "), arrows: "to", font: { size: 14, color: "#8C6650", strokeWidth: 3, strokeColor: "#FFFBF4" },
     color: { color: e.label.startsWith("conflict") ? "#E2574C" : "#D8C3A5" }, smooth: { type: "dynamic" } }));
+  // The layout keeps relaxing for a few seconds after a change; re-fit a few times so it never drifts out of view.
+  const settle = () => [0, 400, 1200, 2400, 4000].forEach((ms) =>
+    setTimeout(() => net && net.fit({ animation: { duration: 350, easingFunction: "easeInOutQuad" } }), ms));
   if (!net) {
     nodeSet = new vis.DataSet(nodes); edgeSet = new vis.DataSet(edges);
     net = new vis.Network($("graph"), { nodes: nodeSet, edges: edgeSet }, {
-      physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -38, springLength: 60, centralGravity: 0.02 },
-                 stabilization: { iterations: 150 } },
+      physics: { solver: "forceAtlas2Based",
+                 forceAtlas2Based: { gravitationalConstant: -42, springLength: 62, centralGravity: 0.02, avoidOverlap: 0.45, damping: 0.5 },
+                 stabilization: { iterations: 300 } },
       interaction: { dragView: true, zoomView: true },
     });
     net.on("stabilized", () => net.fit({ animation: { duration: 500 } }));
+    settle();
     return;
   }
   const keepN = new Set(nodes.map((n) => n.id)), keepE = new Set(edges.map((e) => e.id));
   nodeSet.remove(nodeSet.getIds().filter((id) => !keepN.has(id)));
   edgeSet.remove(edgeSet.getIds().filter((id) => !keepE.has(id)));
   nodeSet.update(nodes); edgeSet.update(edges);
-  net.fit({ animation: { duration: 600 } });
+  settle();
 }
 
 function renderHood(s) {
@@ -125,13 +144,13 @@ function renderHood(s) {
   totals.Band = { calls: bandMsgs, models: ["4 agents"] };
   const order = ["SIE", "Cognee", "Keenable", "Band"];
   const unit = { SIE: "model calls", Cognee: "memory ops", Keenable: "web lookups", Band: "agent posts" };
-  $("totals").innerHTML = order.map((k) => {
+  setHTML("totals", order.map((k) => {
     const t = totals[k] || { calls: 0, models: [] };
     const sub = k === "SIE" ? `${t.models?.length || 0} models` : unit[k];
     return `<div class="total ${k}"><b>${t.calls}</b><span>${k} · ${sub}</span></div>`;
-  }).join("");
-  $("calls").innerHTML = (s.calls || []).slice(-7).reverse().map((c) =>
-    `<li><span class="badge ${c.sponsor}">${c.sponsor}</span><span>${esc(c.model)} · ${esc(c.note)}</span><span class="ms">${(c.ms / 1000).toFixed(1)}s</span></li>`).join("");
+  }).join(""));
+  setHTML("calls", (s.calls || []).slice(-7).reverse().map((c) =>
+    `<li><span class="badge ${c.sponsor}">${c.sponsor}</span><span>${esc(c.model)} · ${esc(c.note)}</span><span class="ms">${(c.ms / 1000).toFixed(1)}s</span></li>`).join(""));
 }
 
 function render(s) {
@@ -143,7 +162,7 @@ function render(s) {
   renderMeds(s.medications || []);
   renderTimeline(s.timeline || []);
   renderGraph(s.graph || { nodes: [], edges: [] });
-  $("brief").innerHTML = s.brief ? md(s.brief) : `<p class="empty">The Guardian writes this once the facts are checked.</p>`;
+  setHTML("brief", s.brief ? md(s.brief) : `<p class="empty">The Guardian writes this once the facts are checked.</p>`);
   renderHood(s);
   const input = $("reply-input");
   const waiting = s.pending && s.pending.type === "confirm_dose";
@@ -185,7 +204,7 @@ $("suggest").onclick = () => { $("reply-input").value = SUGGESTED; $("suggest").
 
 $("btn-docs").onclick = () => post("/api/share/documents");
 $("btn-voice").onclick = () => post("/api/share/voice-note");
-$("btn-reset").onclick = async () => { await post("/api/reset"); net = null; $("graph").innerHTML = ""; version = -1; };
+$("btn-reset").onclick = async () => { await post("/api/reset"); net = null; $("graph").innerHTML = ""; version = -1; feedIds = []; lastGraph = ""; for (const k in lastHTML) delete lastHTML[k]; };
 $("reply-form").onsubmit = async (e) => {
   e.preventDefault();
   const text = $("reply-input").value.trim();

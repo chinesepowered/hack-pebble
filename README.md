@@ -4,9 +4,9 @@
 
 When an aging parent comes home from the hospital, the family is left reconciling discharge papers, new pill bottles and a group chat of symptoms, and mistakes are common: one study found 65% of patients left the hospital with a discrepancy in their medication records. Capy Care is a team of four AI agents that does one real job for the family: **medication reconciliation**. They read every document, photo and voice note with **Superlinked SIE**, remember each fact with its date and catch contradictions in a **Cognee** knowledge graph, check the official drug label on the live web with **Keenable**, and work alongside the family in a shared **Band** room. Nothing changes without a person saying yes, and the crew finishes with a doctor-visit brief the family can bring to the appointment.
 
-![Capy Care dashboard after a full run](docs/dashboard.png)
+![Cognee flags the lisinopril dose conflict, the family resolves it, and the Cognee graph updates](docs/demo.gif)
 
-📽️ Demo video: [`demo/capy-care-demo.mp4`](demo/capy-care-demo.mp4) · 🗂️ Pitch: [`pitch.pdf`](pitch.pdf) ([HTML](pitch.html)) · 🐹 Mascot: [`brand/capy-crew.png`](brand/capy-crew.png)
+📽️ Demo video (2:26): [`demo/capy-care-demo.mp4`](demo/capy-care-demo.mp4) · subtitles [`.srt`](demo/capy-care-demo.srt) · 🗂️ Pitch: [`pitch.pdf`](pitch.pdf) ([HTML](pitch.html)) · 🐹 Mascot: [`brand/capy-crew.png`](brand/capy-crew.png)
 
 ## Sponsors at a glance
 
@@ -45,6 +45,8 @@ flowchart LR
 **SIE senses, Cognee remembers.** Small specialist models on SIE turn messy inputs into clean, dated facts without an LLM. Cognee stores those facts in a temporal knowledge graph that notices when two dated sources disagree. The Band room keeps the family in the loop, and Keenable grounds every claim in the official label.
 
 ### The demo scenario (all fictional data)
+
+![Capy Care dashboard after a full run](docs/dashboard.png)
 
 1. **Lily shares Mom's discharge summary and a photo of the new pill bottle.** Capy Reader runs docling on the PDF (1.3 s) and LightOnOCR on the photo (1.4 s), then GLiNER2 pulls each medication, dose, frequency and status (`STOP`, `NEW`) with no LLM.
 2. **Elder Capy remembers both sources with their dates** (Nov 8 and Nov 11) and runs Cognee's conflict review, which creates a `FactConflict`: *lisinopril `has_dose` 5 mg once daily vs 10 mg once daily*.
