@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capy Care</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/web/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <img src="/web/img/capy-guardian.svg" alt="" class="logo">
+    <div>
+      <h1>Capy Care</h1>
+      <p><span id="patient">Eleanor Park</span>'s care team · a calm crew of AI agents for the family</p>
+    </div>
+  </div>
+  <div class="crew" id="crew"></div>
+  <div class="pills">
+    <span class="pill" id="warm">SIE warming up…</span>
+    <span class="pill band">Band room live</span>
+    <button class="ghost" id="btn-reset" title="Start a new case">↺ New case</button>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="card chat">
+    <div class="card-h"><h2>Family room</h2><span class="tag band">live in Band</span></div>
+    <div class="feed" id="feed"></div>
+    <div class="composer">
+      <div class="actions">
+        <button id="btn-docs">📎 Share Mom's papers + new bottle</button>
+        <button id="btn-voice">🎙️ Forward Sam's voice note</button>
+      </div>
+      <form id="reply-form" class="reply">
+        <input id="reply-input" autocomplete="off" placeholder="Reply to the capys…">
+        <button id="btn-reply" type="submit">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="col">
+    <div class="card meds">
+      <div class="card-h"><h2>Mom's medications</h2><span class="tag">reconciled</span></div>
+      <div id="conflict"></div>
+      <ul id="med-list" class="med-list"><li class="empty">Share Mom's papers to start.</li></ul>
+    </div>
+    <div class="card timeline-card">
+      <div class="card-h"><h2>Timeline</h2><span class="tag cognee">time-aware memory</span></div>
+      <ol id="timeline" class="timeline"><li class="empty">Nothing yet.</li></ol>
+    </div>
+  </section>
+
+  <section class="col">
+    <div class="card graph-card">
+      <div class="card-h"><h2>Family memory</h2><span class="tag cognee">Cognee graph</span></div>
+      <div id="graph"></div>
+    </div>
+    <div class="card brief-card">
+      <div class="card-h"><h2>Doctor-visit brief</h2><span class="tag sie">written by Qwen3.8 on SIE</span></div>
+      <div id="brief" class="brief"><p class="empty">The Guardian writes this once the facts are checked.</p></div>
+    </div>
+    <div class="card hood">
+      <div class="card-h"><h2>Under the hood</h2></div>
+      <div id="totals" class="totals"></div>
+      <ul id="calls" class="calls"></ul>
+    </div>
+  </section>
+</main>
+<script src="/web/app.js"></script>
+</body>
+</html>

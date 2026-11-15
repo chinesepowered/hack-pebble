@@ -2,3 +2,8 @@
 .env.*
 __pycache__/
 .venv/
+.cognee/
+*.log
+.vault/
+scratch_tests/
+node_modules/

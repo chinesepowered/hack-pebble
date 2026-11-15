@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Discharge Summary - Eleanor Park</title>
+<style>
+  @page { size: Letter; margin: 0.7in; }
+  body { font-family: "DejaVu Sans", Arial, sans-serif; color: #1d2733; font-size: 11pt; line-height: 1.45; }
+  .hdr { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #1f5c99; padding-bottom: 8px; }
+  .hosp { font-size: 18pt; font-weight: 700; color: #1f5c99; }
+  .hosp small { display: block; font-size: 9pt; font-weight: 400; color: #4a5a6a; }
+  .doc { text-align: right; font-size: 13pt; font-weight: 700; }
+  .doc small { display: block; font-size: 9pt; font-weight: 400; color: #4a5a6a; }
+  table.meta { width: 100%; border-collapse: collapse; margin: 14px 0 6px; font-size: 10pt; }
+  table.meta td { padding: 3px 6px; border: 1px solid #c9d3dd; }
+  table.meta td.k { background: #eef3f8; font-weight: 700; width: 22%; }
+  h2 { font-size: 11.5pt; color: #1f5c99; border-bottom: 1px solid #c9d3dd; margin: 16px 0 6px; padding-bottom: 2px; text-transform: uppercase; letter-spacing: .4px; }
+  table.meds { width: 100%; border-collapse: collapse; font-size: 10.5pt; }
+  table.meds th { background: #1f5c99; color: #fff; text-align: left; padding: 5px 6px; }
+  table.meds td { border-bottom: 1px solid #d8e0e8; padding: 5px 6px; }
+  .stop td { color: #8a2d2d; }
+  .sig { margin-top: 22px; font-size: 10pt; }
+  .foot { position: fixed; bottom: 0; left: 0; right: 0; font-size: 8pt; color: #7a8794; text-align: center; border-top: 1px solid #d8e0e8; padding-top: 4px; }
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <div class="hosp">Riverside General Hospital<small>Department of Internal Medicine &middot; 400 Riverside Drive</small></div>
+    <div class="doc">DISCHARGE SUMMARY<small>Date of discharge: November 8, 2026</small></div>
+  </div>
+
+  <table class="meta">
+    <tr><td class="k">Patient</td><td>Eleanor Park</td><td class="k">Date of birth</td><td>March 3, 1948 (78 y)</td></tr>
+    <tr><td class="k">MRN</td><td>RG-0048213</td><td class="k">Admitted</td><td>November 5, 2026</td></tr>
+    <tr><td class="k">Attending</td><td>Dr. Priya Shah, MD</td><td class="k">Discharged to</td><td>Home with family</td></tr>
+  </table>
+
+  <h2>Reason for admission</h2>
+  <p>Elevated blood pressure (182/96) with headache and fatigue. Mild dehydration. Type 2 diabetes, well controlled.</p>
+
+  <h2>Hospital course</h2>
+  <p>Blood pressure improved after stopping hydrochlorothiazide and starting lisinopril. Kidney function stable at discharge.
+     Blood glucose within target on metformin.</p>
+
+  <h2>Discharge medications</h2>
+  <table class="meds">
+    <tr><th>Medication</th><th>Dose</th><th>How to take</th><th>Status</th></tr>
+    <tr><td>Lisinopril</td><td>5 mg</td><td>1 tablet by mouth once daily</td><td>NEW</td></tr>
+    <tr><td>Metformin</td><td>500 mg</td><td>1 tablet by mouth twice daily with meals</td><td>Continue</td></tr>
+    <tr><td>Atorvastatin</td><td>20 mg</td><td>1 tablet by mouth nightly</td><td>Continue</td></tr>
+    <tr class="stop"><td>Hydrochlorothiazide</td><td>25 mg</td><td>&mdash;</td><td>STOP</td></tr>
+  </table>
+
+  <h2>Follow-up</h2>
+  <p>Cardiology follow-up with <b>Dr. Maria Alvarez</b> on November 10, 2026 to recheck blood pressure.
+     Return to the emergency department for fainting, chest pain, or severe dizziness.</p>
+
+  <div class="sig">Electronically signed by Dr. Priya Shah, MD &middot; November 8, 2026, 14:12</div>
+  <div class="foot">Synthetic demo document for the Capy Care hackathon project &middot; fictional patient, not a real medical record</div>
+</body>
+</html>
