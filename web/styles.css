@@ -68,6 +68,9 @@ button.ghost { padding: 6px 10px; }
 .reply input { flex: 1; border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; font: 14px Inter, sans-serif; color: var(--ink); background: #FFFDF9; }
 .reply input.attention { border-color: var(--keenable); box-shadow: 0 0 0 3px rgba(226, 137, 74, .18); }
 #btn-reply { background: var(--band); color: #fff; border-color: var(--band); }
+.suggest { text-align: left; font-weight: 500; background: #FFF4E8; border-color: #F6CFAE; color: #7A4A28; animation: pop .35s ease-out; }
+.suggest b { color: var(--keenable); }
+.viewonly { font-size: 12.5px; color: var(--muted); background: var(--soft); border-radius: 10px; padding: 6px 10px; }
 
 /* meds */
 .meds { flex: 1.2; overflow-y: auto; }

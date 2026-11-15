@@ -8,3 +8,5 @@ __pycache__/
 scratch_tests/
 node_modules/
 !.env.example
+.tools/
+.tools/

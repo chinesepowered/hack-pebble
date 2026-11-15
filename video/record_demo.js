@@ -5,6 +5,7 @@ const path = require('path');
 const { chromium } = require('playwright');
 
 const BASE = 'http://127.0.0.1:8000';
+const TOKEN = process.env.CAPY_DEMO_TOKEN || '';
 const REPLY = "Just called Maple Pharmacy. Dr. Alvarez increased it to 10 mg at Mom's follow-up on November 10, so 10 mg is correct.";
 
 (async () => {
@@ -12,8 +13,8 @@ const REPLY = "Just called Maple Pharmacy. Dr. Alvarez increased it to 10 mg at 
   fs.mkdirSync(path.join(out, 'frames'), { recursive: true });
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 }, deviceScaleFactor: 1 });
-  await page.request.post(`${BASE}/api/reset`);
-  await page.goto(BASE, { waitUntil: 'networkidle' });
+  await page.request.post(`${BASE}/api/reset`, { headers: { 'X-Demo-Token': TOKEN } });
+  await page.goto(`${BASE}/?t=${encodeURIComponent(TOKEN)}`, { waitUntil: 'networkidle' });
   const state = () => page.evaluate(async () => (await fetch('/api/state')).json());
   const waitFor = async (pred, timeoutMs = 420000) => {
     const start = Date.now();

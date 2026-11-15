@@ -7,6 +7,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import logging
+import os
 import re
 import shutil
 import uuid
@@ -95,6 +96,19 @@ async def lifespan(_app: FastAPI):
 
 
 app = FastAPI(title="Capy Care", lifespan=lifespan)
+DEMO_TOKEN = os.environ.get("CAPY_DEMO_TOKEN", "")
+
+
+@app.middleware("http")
+async def demo_guard(request, call_next):
+    """When a demo token is set (public tunnel), anyone can watch but only token holders can act."""
+    if DEMO_TOKEN and request.method == "POST":
+        token = request.headers.get("x-demo-token") or request.query_params.get("t")
+        if token != DEMO_TOKEN:
+            return JSONResponse({"error": "This is a view-only link."}, status_code=403)
+    return await call_next(request)
+
+
 app.mount("/web", StaticFiles(directory=config.WEB_DIR), name="web")
 app.mount("/brand", StaticFiles(directory=config.ROOT / "brand"), name="brand")
 
@@ -108,6 +122,7 @@ async def index() -> FileResponse:
 async def state() -> JSONResponse:
     data = STATE.to_dict()
     data["warm"] = _runtime["warm"]
+    data["requires_token"] = bool(DEMO_TOKEN)
     data["human"] = HUMAN
     data["patient"] = config.PATIENT
     return JSONResponse(data)

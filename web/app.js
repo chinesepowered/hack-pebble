@@ -148,6 +148,11 @@ function render(s) {
   const waiting = s.pending && s.pending.type === "confirm_dose";
   input.classList.toggle("attention", !!waiting);
   input.placeholder = waiting ? "Tell Capy Guardian what the pharmacy said…" : "Reply to the capys…";
+  const viewOnly = s.requires_token && !TOKEN;
+  $("viewonly").hidden = !viewOnly;
+  $("suggest").hidden = !waiting || viewOnly || !!input.value;
+  if (waiting) $("suggest").innerHTML = `💬 <b>Suggested reply:</b> ${esc(SUGGESTED)}`;
+  for (const id of ["btn-docs", "btn-voice", "btn-reply", "btn-reset"]) if (viewOnly) $(id).disabled = true;
   $("btn-docs").disabled = s.documents.some((d) => d.kind !== "audio");
   $("btn-voice").disabled = s.documents.some((d) => d.kind === "audio");
 }
@@ -167,11 +172,15 @@ async function tick() {
   setTimeout(tick, 700);
 }
 
+const TOKEN = new URLSearchParams(location.search).get("t") || "";
+const SUGGESTED = "Just called Maple Pharmacy. Dr. Alvarez increased it to 10 mg at Mom's follow-up on November 10, so 10 mg is correct.";
+
 async function post(url, body) {
-  const opts = { method: "POST" };
-  if (body) { opts.headers = { "Content-Type": "application/json" }; opts.body = JSON.stringify(body); }
+  const opts = { method: "POST", headers: { "X-Demo-Token": TOKEN } };
+  if (body) { opts.headers["Content-Type"] = "application/json"; opts.body = JSON.stringify(body); }
   return fetch(url, opts);
 }
+$("suggest").onclick = () => { $("reply-input").value = SUGGESTED; $("suggest").hidden = true; $("reply-input").focus(); };
 
 $("btn-docs").onclick = () => post("/api/share/documents");
 $("btn-voice").onclick = () => post("/api/share/voice-note");

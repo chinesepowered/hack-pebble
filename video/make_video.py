@@ -75,7 +75,33 @@ def remap(anchors: list[tuple[float, float]], t: float) -> float:
     return anchors[-1][1]
 
 
-def demo_scene(sid: str, anchors: list[tuple[float, float]], captions: list[tuple[str, float, float]], out: Path) -> float:
+# Close-up boxes on the 1920x1080 dashboard (all 16:9), scaled into the 1728x972 frame.
+FULL = (0, 0, 1920, 1080)
+CHAT_TOP = (0, 85, 1180, 664)      # family room + medications
+CHAT_BOTTOM = (0, 416, 1180, 664)  # latest messages, reply box, timeline
+CONFLICT = (600, 85, 1180, 664)    # conflict card, medications, start of the graph
+GRAPH = (1150, 85, 770, 433)       # Cognee knowledge graph
+BRIEF = (1150, 455, 770, 433)      # doctor-visit brief
+
+
+def cut_shots(raw: Path, shots: list[tuple[float, float, tuple[int, int, int, int]]], sid: str) -> Path:
+    """Re-cut the remapped footage into close-ups and concatenate them."""
+    parts = []
+    for i, (a, b, (x, y, w, h)) in enumerate(shots):
+        part = WORK / f"{sid}_shot{i}.mp4"
+        run(["ffmpeg", "-y", "-ss", f"{a:.3f}", "-i", str(raw), "-t", f"{b - a:.3f}", "-vf",
+             f"crop={w}:{h}:{x}:{y},scale=1728:972:flags=lanczos,fps={FPS},format=yuv420p",
+             "-c:v", "libx264", "-crf", "16", "-an", str(part)])
+        parts.append(part)
+    lst = WORK / f"{sid}_shots.txt"
+    lst.write_text("".join(f"file '{p}'\n" for p in parts))
+    out = WORK / f"{sid}_cut.mp4"
+    run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-c", "copy", str(out)])
+    return out
+
+
+def demo_scene(sid: str, anchors: list[tuple[float, float]], captions: list[tuple[str, float, float]], out: Path,
+               shots: list[tuple[float, float, tuple[int, int, int, int]]] | None = None) -> float:
     mp3 = ROOT / "video" / "audio" / f"{sid}.mp3"
     dur = anchors[-1][1]
     r_start, r_end = anchors[0][0], anchors[-1][0]
@@ -94,8 +120,14 @@ def demo_scene(sid: str, anchors: list[tuple[float, float]], captions: list[tupl
         if (r1 - r0) / max(o1 - o0, 1e-6) > 1.6:
             ff_windows.append((o0, o1))
     raw = WORK / f"{sid}_raw.mp4"
-    run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-vf",
-         f"fps={FPS},scale=1728:972:flags=lanczos,format=yuv420p", "-t", f"{dur:.3f}", "-c:v", "libx264", "-crf", "16", str(raw)])
+    if shots:
+        full = WORK / f"{sid}_full.mp4"
+        run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-vf", f"fps={FPS},format=yuv420p",
+             "-t", f"{dur:.3f}", "-c:v", "libx264", "-crf", "14", str(full)])
+        raw = cut_shots(full, shots, sid)
+    else:
+        run(["ffmpeg", "-y", "-f", "concat", "-safe", "0", "-i", str(lst), "-vf",
+             f"fps={FPS},scale=1728:972:flags=lanczos,format=yuv420p", "-t", f"{dur:.3f}", "-c:v", "libx264", "-crf", "16", str(raw)])
     inputs = ["-loop", "1", "-framerate", str(FPS), "-i", str(ASSETS / "frame.png"), "-i", str(raw)]
     graph = [f"[0:v][1:v]overlay=96:100:shortest=1[v0]"]
     label, k = "v0", 2
@@ -133,17 +165,20 @@ sid = "04_demo_conflict"
 text = scenes[sid]["text"]
 p2, p3, p4 = phrase_starts(text, ["SIE reads each one", "Elder Capy stores", "The Pharmacist reads"], audio[sid])
 d4 = PAD_BEFORE + audio[sid] + PAD_AFTER
-anchors = [(ev["docs"] - 3.0, 0.0), (ev["docs"], 3.0), (ev["elder"], p3), (ev["conflict"], p4 + 1.0), (ev["ask"] + 3.0, d4)]
-total += demo_scene(sid, anchors, [("cap-1a", 0, p3), ("cap-1b", p3, p4 + 1.0), ("cap-1c", p4 + 1.0, d4)], WORK / f"{sid}.mp4")
+anchors = [(ev["docs"] - 3.0, 0.0), (ev["docs"], 3.0), (ev["elder"], p3), (ev["conflict"], p4 - 1.0), (ev["ask"] + 3.0, d4)]
+shots = [(0, 3.4, FULL), (3.4, p3, CHAT_TOP), (p3, p4 - 1.0, FULL), (p4 - 1.0, p4 + 4.5, CONFLICT), (p4 + 4.5, d4, CHAT_BOTTOM)]
+total += demo_scene(sid, anchors, [("cap-1a", 0, p3), ("cap-1b", p3, p4 + 4.5), ("cap-1c", p4 + 4.5, d4)],
+                    WORK / f"{sid}.mp4", shots)
 clips.append(WORK / f"{sid}.mp4")
 
 # 5: family confirms -> Cognee resolve_conflict
 sid = "05_demo_resolve"
 text = scenes[sid]["text"]
 (q2,) = phrase_starts(text, ["Gliner 2 reads"], audio[sid])
-d5 = PAD_BEFORE + audio[sid] + PAD_AFTER
-anchors = [(ev["typing"] - 0.8, 0.0), (ev["reply"], q2), (ev["resolved"], d5 - 2.5), (ev["resolved"] + 2.5, d5)]
-total += demo_scene(sid, anchors, [("cap-2a", 0, q2), ("cap-2b", q2, d5)], WORK / f"{sid}.mp4")
+d5 = PAD_BEFORE + audio[sid] + PAD_AFTER + 1.5  # hold on the Cognee graph a moment longer
+anchors = [(ev["typing"] - 0.8, 0.0), (ev["reply"], q2), (ev["resolved"], q2 + 2.0), (ev["resolved"] + 2.5, d5)]
+shots = [(0, q2, CHAT_BOTTOM), (q2, q2 + 5.6, CONFLICT), (q2 + 5.6, d5, GRAPH)]
+total += demo_scene(sid, anchors, [("cap-2a", 0, q2), ("cap-2b", q2, d5)], WORK / f"{sid}.mp4", shots)
 clips.append(WORK / f"{sid}.mp4")
 
 # 6: voice note -> Whisper -> Cognee TEMPORAL -> label -> brief
@@ -153,7 +188,8 @@ r2, r3, r4 = phrase_starts(text, ["Whisper on SIE", "Elder Capy asks", "The offi
 d6 = PAD_BEFORE + audio[sid] + PAD_AFTER
 anchors = [(ev["voice"] - 1.0, 0.0), (ev["voice"], 2.5), (ev["voice"] + 4.0, r3), (ev["temporal"], r3 + (r4 - r3) * 0.55),
            (ev["brief"], d6 - 5.0), (ev["end"], d6)]
-total += demo_scene(sid, anchors, [("cap-3a", 0, r3), ("cap-3b", r3, r4), ("cap-3c", r4, d6)], WORK / f"{sid}.mp4")
+shots = [(0, r4, CHAT_BOTTOM), (r4, d6 - 5.0, CHAT_BOTTOM), (d6 - 5.0, d6, BRIEF)]
+total += demo_scene(sid, anchors, [("cap-3a", 0, r3), ("cap-3b", r3, r4), ("cap-3c", r4, d6)], WORK / f"{sid}.mp4", shots)
 clips.append(WORK / f"{sid}.mp4")
 
 # 7-8: how it works, close
