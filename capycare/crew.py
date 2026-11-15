@@ -107,6 +107,13 @@ def dose_change(drug: str) -> dict[str, Any]:
             "phone": phone.group(0) if phone else ""}
 
 
+def when_clause(trigger: str) -> str:
+    trigger = (trigger or "").strip().lower()
+    if not trigger:
+        return ""
+    return trigger if trigger.startswith(("when", "while", "after", "in the")) else f"when she {trigger}"
+
+
 def add_timeline(date: str, title: str, detail: str, kind: str, order: int = 0) -> None:
     if not any(e["title"] == title and e["date"] == date for e in STATE.timeline):
         STATE.timeline.append({"date": date, "title": title, "detail": detail, "kind": kind, "order": order})
@@ -179,16 +186,19 @@ class Reader(CapyAdapter):
                 meds.append(name)
         facts = []
         for med in meds:
-            fact = await sie.structured(snippet_for(med, text), {
+            line = snippet_for(med, text)
+            fact = await sie.structured(line, {
                 "medication": f"generic drug name, e.g. {med}",
                 "dose": "strength, e.g. 5 mg",
                 "frequency": "how often it is taken, e.g. once daily",
                 "status": "the status column if present, e.g. NEW, Continue or STOP",
                 "prescriber": "the prescribing doctor",
             }, note=f"medication fact: {med}")
+            # A table row's status column ("STOP", "NEW") is authoritative when GLiNER2 leaves it blank.
+            status = norm_status(fact.get("status", "")) or (norm_status(line) if line.strip().startswith("|") else "")
             facts.append(MedFact(medication=med, dose=norm_dose(fact.get("dose", "")),
                                  frequency=norm_frequency(fact.get("frequency", "")),
-                                 status=norm_status(fact.get("status", "")), prescriber=fact.get("prescriber") or ""))
+                                 status=status, prescriber=fact.get("prescriber") or ""))
         kind = meta.get("document_type") or "document"
         date = iso(meta.get("document_date", "")) or TODAY.isoformat()
         where = meta.get("source_name") or doc.name
@@ -215,7 +225,7 @@ class Reader(CapyAdapter):
         symptom = Symptom(symptom=(sym.get("symptom") or "dizziness").lower(), started=sym.get("started", ""),
                           started_on=started_on, trigger=(sym.get("trigger") or "").lower())
         add_timeline(started_on or note_date, f"{symptom.symptom.capitalize()} begins",
-                     f"{symptom.trigger or ''} (reported by Sam)".strip(), "symptom", order=2)
+                     f"mostly {when_clause(symptom.trigger)} · reported by Sam".replace("mostly  · ", ""), "symptom", order=2)
         add_timeline(note_date, "Sam's voice note", f"“{text[:90]}…”", "note")
         return Source(id=doc.id, label="Voice note from Sam", kind="voice note", date=started_on or note_date,
                       text=text, symptoms=[symptom], entities=found)
@@ -224,8 +234,8 @@ class Reader(CapyAdapter):
     def describe(src: Source) -> str:
         if src.symptoms:
             s = src.symptoms[0]
-            return (f"🎙️ **{src.label}** — “{src.text}”\n• symptom: {s.symptom}"
-                    f"{' ' + s.trigger if s.trigger else ''} · started {s.started} ({nice(s.started_on)})")
+            return (f"🎙️ **{src.label}** — “{src.text}”\n• symptom: {s.symptom}, mostly {when_clause(s.trigger)}"
+                    f" · started {s.started} ({nice(s.started_on)})")
         icon = "📄" if "discharge" in src.kind else "💊"
         lines = [f"{icon} **{src.label}** ({nice(src.date)})"]
         for f in src.facts:
@@ -240,7 +250,7 @@ def memory_text(src: Source) -> str:
     when = dt.date.fromisoformat(src.date).strftime("%B %-d, %Y")
     if src.symptoms:
         s = src.symptoms[0]
-        return (f"Since {when}, {config.PATIENT} has had {s.symptom}{' ' + s.trigger if s.trigger else ''}. "
+        return (f"Since {when}, {config.PATIENT} has had {s.symptom}, mostly {when_clause(s.trigger)}. "
                 f"Her son Sam reported this in a voice note: \"{src.text}\"")
     meds = "; ".join(f"{f.medication} {f.dose} {f.frequency}".strip() for f in src.facts if f.status != "stop")
     stopped = "; ".join(f"{f.medication} {f.dose}".strip() for f in src.facts if f.status == "stop")
@@ -312,14 +322,15 @@ class Elder(CapyAdapter):
                        0 <= (start - dt.date.fromisoformat(c["changed_on"])).days <= 4), None)
         if change:
             gap = (start - dt.date.fromisoformat(change["changed_on"])).days
-            link = (f"So the {sym.symptom} began **{gap} day{'s' if gap != 1 else ''} after** {change['medication']} went "
-                    f"from {change['from_dose']} to {change['dose']} ({nice(change['changed_on'])}).")
+            when = "the same day" if gap == 0 else f"{gap} day{'s' if gap != 1 else ''} after"
+            link = (f"So the {sym.symptom} began **{when}** {change['medication']} went "
+                    f"from {change['from_dose']} to {change['dose_full']} ({nice(change['changed_on'])}).")
             STATE.pending = {"type": "check_symptom", "drug": change["medication"], "symptom": sym.symptom}
         else:
             link = "I don't see a medication change right before it."
             STATE.pending = {"type": "check_symptom", "drug": "", "symptom": sym.symptom}
         await tools.send_message(
-            f"🧠 Remembered Sam's note: {sym.symptom} {sym.trigger} since {nice(sym.started_on)}.\n"
+            f"🧠 Remembered Sam's note: {sym.symptom}, mostly {when_clause(sym.trigger)}, since {nice(sym.started_on)}.\n"
             f"📅 Cognee, what changed before then? “{answer}”\n{link}\n\nCapy Pharmacist, what does the label say about this?",
             mentions=[IDS["PHARMACIST"]])
 
@@ -342,7 +353,7 @@ class Elder(CapyAdapter):
                 f"by phone on {TODAY.strftime('%B %-d, %Y')}.")
         await MEMORY.remember("Family confirmation (pharmacy call)", p["changed_on"], text)
         await self.call(tools, "Cognee", f"remember(“Family confirmation”, effective_date={p['changed_on']})")
-        STATE.confirmations.append({"medication": drug, "dose": p["dose"], "from_dose": p["from_dose"],
+        STATE.confirmations.append({"medication": drug, "dose": p["dose_value"], "dose_full": p["dose"], "from_dose": p["from_dose"],
                                     "changed_on": p["changed_on"], "changed_by": p["changed_by"],
                                     "confirmed_by": p["confirmed_by"], "reason": reason})
         add_timeline(p["changed_on"], f"{p['changed_by']} increases {drug}",
@@ -476,7 +487,11 @@ class Guardian(CapyAdapter):
             "patient": config.PATIENT,
             "visit": "Follow-up with Dr. Maria Alvarez (cardiology)",
             "current_medications": [
-                {k: m.get(k) for k in ("medication", "dose", "frequency", "review")} for m in STATE.medication_list()],
+                {k: m.get(k) for k in ("medication", "dose", "frequency", "review")}
+                for m in STATE.medication_list() if m["review"] != "stopped"],
+            "stopped_medications": [
+                {k: m.get(k) for k in ("medication", "dose", "date")}
+                for m in STATE.medication_list() if m["review"] == "stopped"],
             "confirmed_changes": STATE.confirmations,
             "symptoms": [{"symptom": s.symptom, "trigger": s.trigger, "started_on": s.started_on, "reported_by": "Sam (son)"}
                          for src in STATE.sources for s in src.symptoms],
@@ -485,7 +500,8 @@ class Guardian(CapyAdapter):
         }
         prompt = (
             "Write a one-page doctor-visit brief in Markdown with exactly these sections:\n"
-            "## Current medications (a short bullet list)\n## What changed (dated bullets)\n"
+            "Do not add a title line; start directly with the first section.\n"
+            "## Current medications (a short bullet list; also list stopped medications as 'stopped')\n## What changed (dated bullets)\n"
             "## What we noticed (dated bullets)\n## Questions for Dr. Alvarez (exactly 3 numbered questions)\n"
             "## Sources (bullets)\nFacts (JSON):\n" + json.dumps(facts, indent=1, default=str)
         )

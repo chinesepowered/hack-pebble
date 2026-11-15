@@ -121,7 +121,10 @@ button.ghost { padding: 6px 10px; }
 .total.SIE { background: var(--sie); } .total.Cognee { background: var(--cognee); }
 .total.Keenable { background: var(--keenable); } .total.Band { background: var(--band); }
 .calls { list-style: none; margin: 0; padding: 0; font-size: 11.5px; color: var(--muted); }
-.calls li { display: flex; gap: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 1px 0; }
+.calls li { display: flex; gap: 6px; align-items: center; white-space: nowrap; overflow: hidden; padding: 1px 0; }
+.calls li > span:nth-child(2) { overflow: hidden; text-overflow: ellipsis; }
+.calls .badge { flex: none; font-size: 10px; padding: 1px 7px; border-radius: 999px; color: #fff; font-weight: 700; }
+.brief h1 { font-size: 20px; margin: 0 0 6px; }
 .calls li .ms { margin-left: auto; font-variant-numeric: tabular-nums; }
 
 @keyframes pop { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

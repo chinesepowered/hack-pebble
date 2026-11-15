@@ -96,17 +96,19 @@ function renderGraph(graph) {
     return { id: n.id, label: n.group === "conflict" ? "⚠ conflict" : n.label,
       shape: n.group === "conflict" ? "diamond" : "box", size: 18,
       color: { background: bg, border: bg, highlight: { background: bg, border: "#4A3423" } },
-      font: { color: fg, face: "Fredoka", size: 15 }, margin: 8, borderWidth: 0, shapeProperties: { borderRadius: 10 } };
+      font: { color: fg, face: "Fredoka", size: 20 }, margin: 10, borderWidth: 0, shapeProperties: { borderRadius: 10 } };
   });
   const edges = (graph.edges || []).map((e, i) => ({ id: `${e.from}-${e.to}-${e.label}`, from: e.from, to: e.to,
-    label: e.label.replace(/_/g, " "), arrows: "to", font: { size: 11, color: "#8C6650", strokeWidth: 3, strokeColor: "#FFFBF4" },
+    label: e.label.replace(/_/g, " "), arrows: "to", font: { size: 14, color: "#8C6650", strokeWidth: 3, strokeColor: "#FFFBF4" },
     color: { color: e.label.startsWith("conflict") ? "#E2574C" : "#D8C3A5" }, smooth: { type: "dynamic" } }));
   if (!net) {
     nodeSet = new vis.DataSet(nodes); edgeSet = new vis.DataSet(edges);
     net = new vis.Network($("graph"), { nodes: nodeSet, edges: edgeSet }, {
-      physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -60, springLength: 110 }, stabilization: { iterations: 120 } },
+      physics: { solver: "forceAtlas2Based", forceAtlas2Based: { gravitationalConstant: -38, springLength: 60, centralGravity: 0.02 },
+                 stabilization: { iterations: 150 } },
       interaction: { dragView: true, zoomView: true },
     });
+    net.on("stabilized", () => net.fit({ animation: { duration: 500 } }));
     return;
   }
   const keepN = new Set(nodes.map((n) => n.id)), keepE = new Set(edges.map((e) => e.id));
