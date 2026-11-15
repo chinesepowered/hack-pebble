@@ -113,6 +113,8 @@ cp .env.example .env   # then fill in your keys and the four Band agent IDs/keys
 
 Open http://localhost:8000 and click **Share Mom's papers + new bottle**, then answer Capy Guardian in the reply box, then **Forward Sam's voice note**. Each click starts a real run through Band, SIE, Cognee and Keenable.
 
+No keys? Open [`replay/capy-care-replay.html`](replay/capy-care-replay.html) in any browser. It plays back one real recorded run step by step, using the same dashboard views. It is a replay, not a live run.
+
 ## Repo map
 
 | Path | What it is |
@@ -124,4 +126,5 @@ Open http://localhost:8000 and click **Share Mom's papers + new bottle**, then a
 | `capycare/band_api.py`, `capycare/app.py` | Band Human API client, FastAPI server and room mirror |
 | `web/` | The capybara dashboard |
 | `demo/` | Synthetic demo documents and the voice note |
+| `replay/`, `video/record_state.py`, `video/build_replay.py` | Standalone replay of a real recorded run (records state changes from the live API, then builds one HTML page) |
 | `pitch.html`, `pitch.pdf` | 4-slide pitch |
