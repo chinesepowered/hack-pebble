@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capy Care Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF6EA; --card: #FFFFFF; --line: #F0E2CF; --ink: #4A3423; --muted: #8C6650; --soft: #FBF3E8;
+    --sie: #8C6CE0; --cognee: #4F8FD6; --keenable: #E2894A; --band: #3FAE7A; --red: #E2574C;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #E9DCC8; color: var(--ink); font-family: Inter, system-ui, sans-serif; }
+  h1, h2, h3 { font-family: Fredoka, sans-serif; margin: 0; }
+  .deck { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 28px 0; }
+  .frame { width: 1920px; height: 1080px; transform-origin: top left; }
+  .slide { position: relative; width: 1920px; height: 1080px; background: var(--bg); overflow: hidden; padding: 84px 104px; }
+  .slide::after { content: ""; position: absolute; inset: auto -120px -160px auto; width: 560px; height: 560px; border-radius: 50%;
+                  background: radial-gradient(circle, rgba(158, 216, 230, .35), rgba(158, 216, 230, 0) 70%); }
+  .kicker { font: 600 22px Fredoka, sans-serif; letter-spacing: .5px; color: var(--muted); text-transform: uppercase; }
+  .num { position: absolute; right: 104px; bottom: 56px; font: 600 20px Fredoka, sans-serif; color: #C9A98A; }
+  .brandmark { position: absolute; left: 104px; bottom: 50px; display: flex; align-items: center; gap: 10px; font: 600 22px Fredoka, sans-serif; color: var(--muted); }
+  .brandmark img { width: 40px; height: 40px; }
+
+  /* slide 1 */
+  .s1 { display: grid; grid-template-columns: 1.25fr .9fr; gap: 64px; align-items: center; }
+  .s1 h1 { font-size: 132px; line-height: .95; color: #5A3820; }
+  .s1 .sub { font: 500 44px/1.2 Fredoka, sans-serif; margin: 22px 0 42px; color: var(--ink); }
+  .mixup { display: flex; gap: 22px; align-items: stretch; }
+  .doc { flex: 1; background: var(--card); border: 3px solid var(--line); border-radius: 26px; padding: 22px 26px; box-shadow: 0 10px 30px rgba(120, 80, 40, .08); }
+  .doc small { font: 600 20px Inter, sans-serif; color: var(--muted); display: block; }
+  .doc b { font: 700 52px Fredoka, sans-serif; display: block; margin-top: 4px; }
+  .doc span { font-size: 22px; color: var(--muted); }
+  .doc.new { border-color: var(--red); }
+  .doc.new b { color: var(--red); }
+  .vs { align-self: center; font: 700 34px Fredoka, sans-serif; color: #C99; }
+  .question { margin-top: 26px; font: 600 34px Fredoka, sans-serif; color: var(--red); }
+  .stats { display: flex; flex-direction: column; gap: 26px; }
+  .stat { background: var(--card); border-radius: 30px; padding: 30px 34px; border: 3px solid var(--line); }
+  .stat b { font: 700 92px/1 Fredoka, sans-serif; color: var(--keenable); }
+  .stat p { margin: 10px 0 0; font-size: 27px; line-height: 1.35; }
+  .stat cite { display: block; margin-top: 8px; font-size: 18px; color: var(--muted); font-style: normal; }
+  .hero-capy { position: absolute; right: 70px; top: 54px; width: 150px; height: 150px; }
+
+  .built { position: absolute; left: 104px; bottom: 52px; display: flex; gap: 12px; align-items: center; font: 600 22px Fredoka, sans-serif; color: var(--muted); }
+  .built span { color: #fff; padding: 7px 16px; border-radius: 999px; font: 700 20px Inter, sans-serif; }
+  .built span.star { font-size: 23px; padding: 9px 20px; }
+
+  /* slide 2 */
+  .s2 { padding-top: 70px; }
+  .s2 h2 { font-size: 64px; line-height: 1.05; margin: 8px 0 12px; }
+  .s2 .lead { font-size: 28px; color: var(--muted); margin: 0 0 28px; max-width: 1560px; line-height: 1.35; }
+  .crew { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .capy { background: var(--card); border-radius: 30px; padding: 24px 26px 26px; border: 3px solid var(--line); position: relative; }
+  .capy.star { border-width: 4px; box-shadow: 0 14px 36px rgba(120, 80, 40, .12); }
+  .capy.star.sie { border-color: var(--sie); } .capy.star.cognee { border-color: var(--cognee); }
+  .capy img { width: 124px; height: 124px; display: block; margin: 0 auto 10px; }
+  .capy h3 { font-size: 36px; text-align: center; }
+  .capy .who { display: block; width: max-content; margin: 8px auto 14px; padding: 6px 16px; border-radius: 999px; color: #fff; font: 700 21px Inter, sans-serif; }
+  .capy p { font-size: 24px; line-height: 1.38; margin: 0; }
+  .capy .tools { margin-top: 12px; font-size: 19px; color: var(--muted); line-height: 1.4; }
+  .bg-sie { background: var(--sie); } .bg-cognee { background: var(--cognee); } .bg-keenable { background: var(--keenable); } .bg-band { background: var(--band); }
+  .promise { margin-top: 24px; display: flex; gap: 18px; align-items: center; font: 600 28px Fredoka, sans-serif; color: var(--ink); }
+  .promise span { background: #EAF7F0; color: var(--band); padding: 8px 18px; border-radius: 999px; }
+
+  /* slide 3 */
+  .s3 h2 { font-size: 84px; margin: 10px 0 8px; }
+  .s3 .lead { font-size: 30px; color: var(--muted); margin: 0 0 40px; }
+  .flow { display: grid; grid-template-columns: 1fr 70px 1.25fr 70px 1.3fr; align-items: stretch; }
+  .arrow { display: grid; place-items: center; font: 700 48px Fredoka, sans-serif; color: #C9A98A; }
+  .box { background: var(--card); border-radius: 28px; padding: 26px 28px; border: 3px solid var(--line); }
+  .box h3 { font-size: 34px; margin-bottom: 12px; }
+  .box ul { margin: 0; padding-left: 26px; font-size: 24px; line-height: 1.5; }
+  .box.sie { border-color: var(--sie); } .box.sie h3 { color: var(--sie); }
+  .box.cognee { border-color: var(--cognee); } .box.cognee h3 { color: var(--cognee); }
+  .inputs .pill { display: block; background: var(--soft); border-radius: 18px; padding: 14px 18px; margin-bottom: 14px; font-size: 25px; }
+  .inputs .pill small { display: block; font-size: 19px; color: var(--muted); }
+  .bridge { margin-top: 16px; padding: 14px 18px; border-radius: 18px; background: #F3ECFF; color: #5B43A8; font-size: 22px; line-height: 1.4; }
+  .bridge b { color: var(--sie); }
+  .stack { display: flex; flex-direction: column; gap: 18px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 28px; }
+  .mini { background: var(--card); border-radius: 24px; padding: 20px 24px; border: 3px solid var(--line); font-size: 23px; line-height: 1.4; }
+  .mini b { font-family: Fredoka, sans-serif; font-size: 27px; }
+  .mini.keenable { border-color: var(--keenable); } .mini.keenable b { color: var(--keenable); }
+  .mini.band { border-color: var(--band); } .mini.band b { color: var(--band); }
+  .speeds { margin-top: 26px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .speeds span { background: var(--card); border: 2px solid var(--line); border-radius: 999px; padding: 8px 18px; font: 600 22px Inter, sans-serif; }
+  .speeds span b { color: var(--sie); }
+
+  /* slide 4 */
+  .s4 { display: grid; grid-template-columns: 1.35fr .9fr; gap: 60px; }
+  .s4 h2 { font-size: 66px; line-height: 1.08; margin: 10px 0 34px; }
+  .steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+  .steps li { display: grid; grid-template-columns: 64px 1fr; gap: 18px; align-items: center; background: var(--card); border-radius: 24px; padding: 16px 22px; border: 3px solid var(--line); }
+  .steps .n { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 28px Fredoka, sans-serif; }
+  .steps p { margin: 0; font-size: 25px; line-height: 1.35; }
+  .steps p b { font-family: Fredoka, sans-serif; }
+  .side h3 { font-size: 36px; margin: 6px 0 16px; }
+  .why { list-style: none; margin: 0 0 34px; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .why li { font-size: 25px; line-height: 1.38; padding-left: 40px; position: relative; }
+  .why li::before { content: "🍊"; position: absolute; left: 0; top: 0; }
+  .next { background: var(--card); border-radius: 26px; padding: 18px 24px; border: 3px solid var(--line); font-size: 22px; line-height: 1.45; }
+  .stackup { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .stackup div { display: grid; grid-template-columns: 196px 1fr; gap: 14px; align-items: center; font-size: 21px; line-height: 1.35; }
+  .stackup b { color: #fff; border-radius: 999px; padding: 6px 0; text-align: center; font: 700 19px Inter, sans-serif; }
+  .stackup .star { font-size: 22px; font-weight: 600; }
+
+  @media print {
+    html, body { background: var(--bg); }
+    .deck { display: block; padding: 0; gap: 0; }
+    .frame { transform: none !important; width: 1920px; height: 1080px; margin: 0 !important; }
+    .slide { page-break-after: always; break-after: page; }
+  }
+  @page { size: 1920px 1080px; margin: 0; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 1 · The problem -->
+<div class="frame"><section class="slide s1">
+  <img class="hero-capy" src="web/img/capy-guardian.svg" alt="">
+  <div>
+    <div class="kicker">One real job · medication reconciliation</div>
+    <h1>Capy Care</h1>
+    <p class="sub">A calm crew of AI agents that keeps Mom's medications straight.</p>
+    <div class="mixup">
+      <div class="doc"><small>Hospital discharge papers · Nov 8</small><b>lisinopril 5 mg</b><span>once daily</span></div>
+      <div class="vs">vs</div>
+      <div class="doc new"><small>New pill bottle · Nov 11</small><b>lisinopril 10 mg</b><span>once daily</span></div>
+    </div>
+    <div class="question">Which one is right? Who catches it?</div>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>63M</b><p>family caregivers in the US juggle papers, bottles and group chats for a parent.</p><cite>AARP &amp; NAC, Caregiving in the U.S. 2025</cite></div>
+    <div class="stat"><b>65%</b><p>of patients left the hospital with a discrepancy in their medication records.</p><cite>Discharge medication study, PubMed 18414970 (2008)</cite></div>
+  </div>
+  <div class="built">Built with <span class="bg-sie star">Superlinked SIE</span><span class="bg-cognee star">Cognee</span><span class="bg-keenable">Keenable</span><span class="bg-band">Band</span></div>
+  <div class="num">1 / 4</div>
+</section></div>
+
+<!-- 2 · The crew -->
+<div class="frame"><section class="slide s2">
+  <div class="kicker">The solution</div>
+  <h2>Four capybaras, one job: a medication list the family can trust</h2>
+  <p class="lead">They read everything the family shares, remember it with dates, catch contradictions, check the official label, and never change anything without a person saying yes.</p>
+  <div class="crew">
+    <div class="capy star sie"><img src="web/img/capy-reader.svg" alt=""><h3>Capy Reader</h3><span class="who bg-sie">Superlinked SIE</span>
+      <p>Reads discharge PDFs, pill-bottle photos and voice notes, and turns them into clean, dated facts.</p>
+      <div class="tools">docling · LightOnOCR · Whisper · GLiNER2 (no LLM)</div></div>
+    <div class="capy star cognee"><img src="web/img/capy-elder.svg" alt=""><h3>Elder Capy</h3><span class="who bg-cognee">Cognee</span>
+      <p>The family's memory: a knowledge graph of dated facts that flags conflicts and answers "what changed before…?"</p>
+      <div class="tools">remember · conflict review · resolve_conflict · TEMPORAL recall</div></div>
+    <div class="capy"><img src="web/img/capy-pharmacist.svg" alt=""><h3>Capy Pharmacist</h3><span class="who bg-keenable">Keenable</span>
+      <p>Reads the official drug label live and quotes the evidence, ranked by SIE's reranker.</p>
+      <div class="tools">DailyMed search + fetch · Qwen3-Reranker-4B</div></div>
+    <div class="capy"><img src="web/img/capy-guardian.svg" alt=""><h3>Capy Guardian</h3><span class="who bg-band">Band</span>
+      <p>Asks a human before any medication change is accepted, then writes the doctor-visit brief.</p>
+      <div class="tools">Band room · @mention handoffs · Qwen3.8 on SIE</div></div>
+  </div>
+  <div class="promise"><span>Flags, never advises</span> A person confirms every medication change.</div>
+  <div class="num">2 / 4</div>
+</section></div>
+
+<!-- 3 · How it works -->
+<div class="frame"><section class="slide s3">
+  <div class="kicker">How it works</div>
+  <h2>SIE senses. Cognee remembers.</h2>
+  <p class="lead">Small specialist models do the reading; a dated knowledge graph does the remembering; a person makes the call.</p>
+  <div class="flow">
+    <div class="box inputs">
+      <h3>The family shares</h3>
+      <span class="pill">📄 Discharge summary<small>PDF</small></span>
+      <span class="pill">💊 New pill bottle<small>phone photo</small></span>
+      <span class="pill">🎙️ Sam's voice note<small>audio</small></span>
+    </div>
+    <div class="arrow">→</div>
+    <div class="box sie">
+      <h3>Superlinked SIE · serverless</h3>
+      <ul>
+        <li><b>extract</b> · docling reads the PDF</li>
+        <li><b>extract</b> · LightOnOCR reads the bottle</li>
+        <li><b>extract</b> · Whisper transcribes the note</li>
+        <li><b>extract</b> · GLiNER2 pulls medication, dose and date, no LLM</li>
+        <li><b>score</b> · Qwen3-Reranker ranks label evidence</li>
+        <li><b>generate</b> · Qwen3.8-27B writes the brief</li>
+      </ul>
+    </div>
+    <div class="arrow">→</div>
+    <div class="box cognee">
+      <h3>Cognee · the family's memory</h3>
+      <ul>
+        <li>each source remembered with its <b>effective date</b></li>
+        <li><b>conflict review</b> finds 5 mg vs 10 mg as a FactConflict</li>
+        <li><b>resolve_conflict</b> stores the family's decision</li>
+        <li><b>TEMPORAL recall</b>: "what changed before the dizziness?"</li>
+      </ul>
+      <div class="bridge"><b>Cognee runs entirely on SIE:</b> its LLM is Qwen3.8-27B and its vectors are Qwen3-Embedding-4B, both served by Superlinked.</div>
+    </div>
+  </div>
+  <div class="row2">
+    <div class="mini keenable"><b>Keenable</b> · finds and reads the official DailyMed label live, so every claim cites a source.</div>
+    <div class="mini band"><b>Band</b> · the four agents share a room with the family and hand off by @mention; you watch them think.</div>
+  </div>
+  <div class="speeds"><span>docling <b>1.3 s</b></span><span>LightOnOCR <b>1.4 s</b></span><span>Whisper <b>1.0 s</b></span><span>GLiNER2 <b>~0.3 s</b> per fact</span><span>measured on SIE serverless, warm</span></div>
+  <div class="num">3 / 4</div>
+</section></div>
+
+<!-- 4 · Demo + why -->
+<div class="frame"><section class="slide s4">
+  <div>
+    <div class="kicker">The demo</div>
+    <h2>A 5 mg vs 10 mg mix-up: caught, confirmed, explained</h2>
+    <ol class="steps">
+      <li><span class="n bg-sie">1</span><p><b>Lily shares Mom's papers + new bottle.</b> Capy Reader extracts every medication with SIE.</p></li>
+      <li><span class="n bg-cognee">2</span><p><b>Cognee flags a conflict:</b> lisinopril 5 mg (Nov 8) vs 10 mg (Nov 11).</p></li>
+      <li><span class="n bg-keenable">3</span><p><b>Both doses are normal on the label</b>, so the Guardian asks Lily to call the pharmacy before the next dose.</p></li>
+      <li><span class="n bg-band">4</span><p><b>"Dr. Alvarez increased it on Nov 10."</b> resolve_conflict stores the family's decision for good.</p></li>
+      <li><span class="n bg-cognee">5</span><p><b>Sam: "dizzy since Tuesday."</b> Temporal recall: that's the day after the dose increase. The label lists dizziness, so it goes into the visit brief with 3 questions for the doctor.</p></li>
+    </ol>
+  </div>
+  <div class="side">
+    <h3>Why it matters</h3>
+    <ul class="why">
+      <li>A real job families do at the kitchen table, done in minutes, with every claim cited.</li>
+      <li>Memory that understands <b>time</b> and <b>contradictions</b>, not just similar text.</li>
+      <li>Small SIE models do the reading; the LLM is used only where it adds judgment.</li>
+      <li>Safe by design: it flags and prepares, and a person decides.</li>
+    </ul>
+    <div class="next"><b>Next:</b> pharmacy refill feeds, translated briefs for multilingual families (SIE translation model), and a shared memory for every sibling (Cognee multi-tenant).</div>
+    <div class="stackup">
+      <div class="star"><b class="bg-sie">Superlinked SIE</b><span>7 models: reading, extraction, ranking, writing, and Cognee's LLM + vectors</span></div>
+      <div class="star"><b class="bg-cognee">Cognee</b><span>dated memory, conflict review, the family's decisions, temporal recall</span></div>
+      <div><b class="bg-keenable">Keenable</b><span>live search + fetch of the official DailyMed label</span></div>
+      <div><b class="bg-band">Band</b><span>the room where the capys hand off and the family confirms</span></div>
+    </div>
+  </div>
+  <div class="num">4 / 4</div>
+</section></div>
+
+</div>
+<script>
+  // Scale 1920x1080 slides to the window for on-screen viewing; print/PDF uses full size.
+  function fit() {
+    const scale = Math.min(1, (window.innerWidth - 40) / 1920);
+    document.querySelectorAll('.frame').forEach((f) => {
+      f.style.transform = `scale(${scale})`;
+      f.style.marginBottom = `${-1080 * (1 - scale)}px`;
+      f.style.marginRight = `${-1920 * (1 - scale)}px`;
+    });
+  }
+  window.addEventListener('resize', fit);
+  fit();
+  document.addEventListener('keydown', (e) => {
+    const frames = [...document.querySelectorAll('.frame')];
+    const i = frames.findIndex((f) => f.getBoundingClientRect().top > 10);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault(); (frames[i] || frames[frames.length - 1]).scrollIntoView({ behavior: 'smooth' });
+    }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault(); const j = Math.max(0, (i === -1 ? frames.length : i) - 2); frames[j].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+</script>
+</body>
+</html>
