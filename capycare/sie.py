@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import contextvars
 import logging
 import time
 from pathlib import Path
@@ -25,6 +26,12 @@ from .state import STATE
 
 log = logging.getLogger("capycare.sie")
 _API_KEY = config.env("SIE_API_KEY")
+_quiet = contextvars.ContextVar("sie_quiet", default=False)  # keep-warm pings stay out of the dashboard
+
+
+def _log(op: str, model: str, ms: float, note: str) -> None:
+    if not _quiet.get():
+        STATE.log_call("SIE", op, model, ms, note)
 
 
 def _client() -> SIEClient:
@@ -36,7 +43,7 @@ async def _timed(op: str, model: str, fn: Callable[[], Any], note: str = "") -> 
     started = time.perf_counter()
     result = await asyncio.to_thread(fn)
     ms = (time.perf_counter() - started) * 1000
-    STATE.log_call("SIE", op, model, ms, note)
+    _log(op, model, ms, note)
     return result, ms
 
 
@@ -130,7 +137,7 @@ async def chat(messages: list[dict[str, str]], max_tokens: int = 700, temperatur
             log.warning("SIE chat returned %s, retrying (attempt %d)", resp.status_code, attempt + 1)
             await asyncio.sleep(1.5 * (attempt + 1))
         resp.raise_for_status()
-    STATE.log_call("SIE", "generate", config.SIE_LLM, (time.perf_counter() - started) * 1000, note or "chat")
+    _log("generate", config.SIE_LLM, (time.perf_counter() - started) * 1000, note or "chat")
     return (resp.json()["choices"][0]["message"]["content"] or "").strip()
 
 
@@ -144,13 +151,14 @@ async def describe_image(data: bytes, fmt: str, prompt: str) -> tuple[str, float
                                  headers={"Authorization": f"Bearer {_API_KEY}"})
         resp.raise_for_status()
     ms = (time.perf_counter() - started) * 1000
-    STATE.log_call("SIE", "generate", config.SIE_LLM, ms, "image → text (vision fallback)")
+    _log("generate", config.SIE_LLM, ms, "image → text (vision fallback)")
     return resp.json().get("text", "").strip(), ms
 
 
 # --- warm-up -----------------------------------------------------------------------------------
 async def warmup() -> dict[str, str]:
     """Touch every model once so the first family request is fast (serverless cold starts)."""
+    _quiet.set(True)
     demo = config.DEMO_DIR
     jobs = {
         "docling": read_pdf(demo / "discharge_summary.pdf"),

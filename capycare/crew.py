@@ -78,6 +78,20 @@ def norm_status(text: str) -> str:
     return ""
 
 
+def clean_med(raw: str, known: list[str]) -> str:
+    """'ELEANOR PARK\\nLISINOPRIL 10 MG TABLET' -> 'lisinopril' (OCR can glue lines into one span)."""
+    lines = [ln.strip() for ln in re.split(r"[\r\n]+", (raw or "").lower()) if ln.strip()]
+    name = lines[-1] if lines else ""
+    for known_name in known:
+        if re.search(rf"\b{re.escape(known_name)}\b", (raw or "").lower()):
+            return known_name
+    for token in config.PATIENT.lower().split():
+        name = re.sub(rf"\b{re.escape(token)}\b", " ", name)
+    name = re.sub(r"\b\d+(\.\d+)?\s*(mg|mcg|g|ml|units?)\b.*$", " ", name)
+    name = re.sub(r"\b(tablets?|tabs?|capsules?|oral|by mouth|hcl)\b", " ", name)
+    return re.sub(r"[^a-z\- ]", " ", re.sub(r"\s+", " ", name)).strip()
+
+
 def snippet_for(med: str, text: str) -> str:
     """The single line that states this medication: a table row if there is one."""
     lines = [ln for ln in text.splitlines() if med in ln.lower()]
@@ -179,10 +193,13 @@ class Reader(CapyAdapter):
         }, note=f"document type and date ({doc.name})")
         found = await sie.entities(text, ["medication", "dose", "prescriber", "date", "pharmacy", "hospital"],
                                    note=f"entities ({doc.name})")
+        known = sorted({f.medication for s in STATE.sources for f in s.facts}, key=len, reverse=True)
         meds = []
         for ent in found:
-            name = (ent["text"] or "").strip().lower()
-            if ent["label"] == "medication" and name and name not in meds:
+            if ent["label"] != "medication":
+                continue
+            name = clean_med(ent["text"] or "", known + meds)
+            if name and name not in meds:
                 meds.append(name)
         facts = []
         for med in meds:
@@ -294,6 +311,20 @@ class Elder(CapyAdapter):
             await self.link_symptom(symptom_src, tools)
             return
         dose_conflicts = [c for c in STATE.conflicts if c.get("attribute") == "has_dose"]
+        if not dose_conflicts:
+            # Safety net: the crew's own reconciliation of dated sources. Labelled as such, never as Cognee's.
+            for med in STATE.medication_list():
+                if len({h["dose"] for h in med["history"]}) > 1:
+                    ch = dose_change(med["medication"])
+                    STATE.conflicts.append({
+                        "id": "", "about": med["medication"], "attribute": "has_dose", "status": "unresolved",
+                        "detected_by": "crew", "resolution_source": None, "selected_fact": None, "resolution_reason": None,
+                        "facts": [{"id": "", "text": f"{med['medication']} has dose {ch['old']}"},
+                                  {"id": "", "text": f"{med['medication']} has dose {ch['new']}"}]})
+                    await tools.send_event(f"Cognee's review didn't flag it, but our reconciliation sees two dated doses for "
+                                           f"{med['medication']}: flagging it for a human.", "thought")
+                    dose_conflicts = [STATE.conflicts[-1]]
+                    break
         if dose_conflicts:
             c = dose_conflicts[0]
             drug = c.get("about") or "a medication"
@@ -344,7 +375,7 @@ class Elder(CapyAdapter):
             chosen = next((f for f in conflict.get("facts", []) if p["dose_value"] in f.get("text", "")), None)
         reason = (f"Confirmed by {p['confirmed_by']} on {TODAY.strftime('%B %-d, %Y')}: {p['changed_by']} changed the "
                   f"dose on {dt.date.fromisoformat(p['changed_on']).strftime('%B %-d, %Y')}.")
-        if conflict and chosen:
+        if conflict and chosen and conflict.get("detected_by") != "crew" and conflict.get("id"):
             await tools.send_event(f"Recording the family's decision in Cognee: {chosen['text']}", "thought")
             await MEMORY.resolve(conflict["id"], chosen["id"], reason)
             await self.call(tools, "Cognee", f"resolve_conflict(selected=“{chosen['text']}”, reason=“{reason[:80]}…”)")
@@ -359,7 +390,11 @@ class Elder(CapyAdapter):
         add_timeline(p["changed_on"], f"{p['changed_by']} increases {drug}",
                      f"{p['from_dose']} → {p['dose']} · confirmed by {p['confirmed_by']}", "change", order=0)
         await MEMORY.refresh_graph()
-        STATE.conflicts = await MEMORY.conflicts()
+        crew_flags = [c for c in STATE.conflicts if c.get("detected_by") == "crew"]
+        for c in crew_flags:
+            c.update({"status": "resolved", "resolution_source": "user", "resolution_reason": reason,
+                      "selected_fact": f"{drug} has dose {p['dose']}"})
+        STATE.conflicts = (await MEMORY.conflicts()) + crew_flags
         STATE.pending = None
         STATE.touch()
         await tools.send_message(

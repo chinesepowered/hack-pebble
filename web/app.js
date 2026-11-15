@@ -66,7 +66,8 @@ function renderConflict(s) {
       ${esc(r.src.label.split(" — ")[0])}<br><small>${niceDate(r.src.date)}</small></div>`;
   }).join('<div style="align-self:center;font-weight:700;color:#c88">vs</div>');
   const waiting = s.pending && s.pending.type === "confirm_dose";
-  const head = byUser ? `✅ Resolved by the family — ${esc(drug)}` : `⚠️ Conflict found by Cognee — ${esc(drug)} dose`;
+  const finder = c.detected_by === "crew" ? "the crew's reconciliation" : "Cognee";
+  const head = byUser ? `✅ Resolved by the family — ${esc(drug)}` : `⚠️ Conflict found by ${finder} — ${esc(drug)} dose`;
   const foot = byUser ? `<small>${esc(c.resolution_reason || "")}</small>`
     : `<small>${waiting ? `Waiting for ${esc(human)} to confirm with the pharmacy · nothing changes until then` : "Checking…"}</small>`;
   $("conflict").innerHTML = `<div class="conflict ${byUser ? "resolved" : ""}"><h3>${head}</h3><div class="vs">${sides}</div>${foot}</div>`;

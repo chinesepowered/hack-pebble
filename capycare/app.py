@@ -85,11 +85,23 @@ async def warm_up() -> None:
     _runtime["warm"] = "ready" if all(v == "ok" for v in result.values()) else f"partial: {result}"
 
 
+async def keep_warm(every_s: float = 480) -> None:
+    """Serverless models scale to zero when idle; a quiet ping keeps live demos fast."""
+    while True:
+        await asyncio.sleep(every_s)
+        try:
+            result = await sie.warmup()
+            log.info("keep-warm: %s", result)
+        except Exception as exc:
+            log.warning("keep-warm failed: %r", exc)
+
+
 @contextlib.asynccontextmanager
 async def lifespan(_app: FastAPI):
     STATE.human_id = (await band_api.me())["id"]
     await new_case()
-    tasks = [asyncio.create_task(run_crew()), asyncio.create_task(poll_room()), asyncio.create_task(warm_up())]
+    tasks = [asyncio.create_task(run_crew()), asyncio.create_task(poll_room()), asyncio.create_task(warm_up()),
+             asyncio.create_task(keep_warm())]
     yield
     for task in tasks:
         task.cancel()
