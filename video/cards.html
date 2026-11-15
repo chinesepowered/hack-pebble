@@ -1,0 +1,78 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Capy Care video cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #FFF6EA; --ink: #4A3423; --muted: #8C6650; --line: #F0E2CF;
+          --sie: #8C6CE0; --cognee: #4F8FD6; --keenable: #E2894A; --band: #3FAE7A; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: transparent; font-family: Inter, sans-serif; color: var(--ink); }
+  h1, h2 { font-family: Fredoka, sans-serif; margin: 0; }
+  .card { width: 1920px; height: 1080px; position: relative; overflow: hidden; background: var(--bg); }
+  .pills { display: flex; gap: 14px; align-items: center; font: 600 26px Fredoka, sans-serif; color: var(--muted); }
+  .pills span { color: #fff; padding: 9px 20px; border-radius: 999px; font: 700 24px Inter, sans-serif; }
+  .pills span.star { font-size: 28px; padding: 11px 24px; }
+  .bg-sie { background: var(--sie); } .bg-cognee { background: var(--cognee); }
+  .bg-keenable { background: var(--keenable); } .bg-band { background: var(--band); }
+
+  #title { padding: 64px 110px; }
+  #title .kicker { font: 600 24px Fredoka, sans-serif; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+  #title h1 { font-size: 118px; line-height: .95; color: #5A3820; margin-top: 6px; }
+  #title .sub { font: 500 40px Fredoka, sans-serif; margin: 12px 0 20px; }
+  #title .crew { position: absolute; left: 260px; width: 1400px; bottom: 16px; height: 650px;
+                 background: url(../brand/capy-crew.png) no-repeat; background-size: 1400px auto; background-position: 0 -156px; }
+
+  #close { display: grid; place-items: center; text-align: center; }
+  #close .inner { display: flex; flex-direction: column; align-items: center; gap: 26px; }
+  #close img { width: 240px; height: 240px; }
+  #close h1 { font-size: 120px; color: #5A3820; }
+  #close h2 { font-size: 56px; }
+  #close .line { font: 500 34px Fredoka, sans-serif; color: var(--muted); }
+  #close .repo { font: 600 28px Inter, sans-serif; color: var(--muted); }
+
+  #frame { background: #EFE2CC; }
+  #frame .shadow { position: absolute; left: 96px; top: 100px; width: 1728px; height: 972px; border-radius: 18px;
+                   box-shadow: 0 18px 50px rgba(90, 56, 32, .28); background: #FFF6EA; }
+  .cap { width: 1920px; height: 1080px; position: relative; background: transparent; }
+  .cap .strip { position: absolute; left: 96px; right: 96px; top: 20px; height: 64px; display: flex; align-items: center; gap: 16px; }
+  .cap .live { background: #E2574C; color: #fff; font: 700 22px Inter, sans-serif; padding: 8px 16px; border-radius: 999px; letter-spacing: .5px; }
+  .cap .step { font: 600 26px Fredoka, sans-serif; color: var(--muted); }
+  .cap .chip { color: #fff; font: 700 24px Inter, sans-serif; padding: 8px 18px; border-radius: 999px; }
+  .cap .text { font: 600 30px Fredoka, sans-serif; color: var(--ink); white-space: nowrap; }
+</style>
+</head>
+<body>
+<section class="card" id="title">
+  <div class="kicker">A team of AI agents · one real job</div>
+  <h1>Capy Care</h1>
+  <p class="sub">A calm crew of AI agents that keeps Mom's medications straight.</p>
+  <div class="pills">Built with <span class="bg-sie star">Superlinked SIE</span><span class="bg-cognee star">Cognee</span><span class="bg-keenable">Keenable</span><span class="bg-band">Band</span></div>
+  <div class="crew"></div>
+</section>
+
+<section class="card" id="close">
+  <div class="inner">
+    <img src="../web/img/capy-guardian.svg" alt="">
+    <h1>Capy Care</h1>
+    <h2>Flags, never advises. A person makes every call.</h2>
+    <div class="line">SIE senses · Cognee remembers · Keenable checks · Band connects</div>
+    <div class="pills"><span class="bg-sie star">Superlinked SIE</span><span class="bg-cognee star">Cognee</span><span class="bg-keenable">Keenable</span><span class="bg-band">Band</span></div>
+    <div class="repo">github.com/chinesepowered/hack-pebble</div>
+  </div>
+</section>
+
+<section class="card" id="frame"><div class="shadow"></div></section>
+
+<section class="cap" id="cap-ff"><div class="strip" style="justify-content:flex-end"><span class="live" style="background:#4A3423">⏩ sped up</span></div></section>
+<section class="cap" id="cap-1a"><div class="strip"><span class="live">LIVE</span><span class="step">Step 1</span><span class="chip bg-sie">Superlinked SIE</span><span class="text">reads the papers · docling · LightOnOCR · GLiNER2, no LLM</span></div></section>
+<section class="cap" id="cap-1b"><div class="strip"><span class="live">LIVE</span><span class="step">Step 1</span><span class="chip bg-cognee">Cognee</span><span class="text">remembers each dated source · conflict review: 5 mg vs 10 mg</span></div></section>
+<section class="cap" id="cap-1c"><div class="strip"><span class="live">LIVE</span><span class="step">Step 1</span><span class="chip bg-keenable">Keenable</span><span class="text">reads the official label</span><span class="chip bg-band">Band</span><span class="text">the Guardian asks Lily</span></div></section>
+<section class="cap" id="cap-2a"><div class="strip"><span class="live">LIVE</span><span class="step">Step 2</span><span class="chip bg-band">Band</span><span class="text">Lily answers the Guardian in the family room</span></div></section>
+<section class="cap" id="cap-2b"><div class="strip"><span class="live">LIVE</span><span class="step">Step 2</span><span class="chip bg-sie">SIE</span><span class="text">GLiNER2 reads her reply</span><span class="chip bg-cognee">Cognee</span><span class="text">resolve_conflict() keeps the family's decision</span></div></section>
+<section class="cap" id="cap-3a"><div class="strip"><span class="live">LIVE</span><span class="step">Step 3</span><span class="chip bg-sie">Superlinked SIE</span><span class="text">Whisper transcribes Sam's voice note in 1 second</span></div></section>
+<section class="cap" id="cap-3b"><div class="strip"><span class="live">LIVE</span><span class="step">Step 3</span><span class="chip bg-cognee">Cognee</span><span class="text">TEMPORAL recall: what changed before the dizziness?</span></div></section>
+<section class="cap" id="cap-3c"><div class="strip"><span class="live">LIVE</span><span class="step">Step 3</span><span class="chip bg-keenable">Keenable</span><span class="text">label evidence</span><span class="chip bg-sie">SIE</span><span class="text">Qwen3.8 writes the doctor-visit brief</span></div></section>
+</body>
+</html>

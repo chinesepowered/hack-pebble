@@ -122,8 +122,13 @@ async def chat(messages: list[dict[str, str]], max_tokens: int = 700, temperatur
             "temperature": temperature, "chat_template_kwargs": {"enable_thinking": False}}
     started = time.perf_counter()
     async with httpx.AsyncClient(timeout=180) as client:
-        resp = await client.post(f"{config.SIE_BASE_URL}/v1/chat/completions", json=body,
-                                 headers={"Authorization": f"Bearer {_API_KEY}"})
+        for attempt in range(5):  # serverless can briefly answer 429/503 under load; back off and retry
+            resp = await client.post(f"{config.SIE_BASE_URL}/v1/chat/completions", json=body,
+                                     headers={"Authorization": f"Bearer {_API_KEY}"})
+            if resp.status_code not in (429, 500, 502, 503, 504) or attempt == 4:
+                break
+            log.warning("SIE chat returned %s, retrying (attempt %d)", resp.status_code, attempt + 1)
+            await asyncio.sleep(1.5 * (attempt + 1))
         resp.raise_for_status()
     STATE.log_call("SIE", "generate", config.SIE_LLM, (time.perf_counter() - started) * 1000, note or "chat")
     return (resp.json()["choices"][0]["message"]["content"] or "").strip()
@@ -159,5 +164,12 @@ async def warmup() -> dict[str, str]:
     results = await asyncio.gather(*jobs.values(), return_exceptions=True)
     for name, res in zip(jobs, results):
         out[name] = "ok" if not isinstance(res, Exception) else f"error: {res!r}"[:160]
+    if out["qwen"] != "ok":  # one retry for the LLM after a short pause
+        await asyncio.sleep(5)
+        try:
+            await chat([{"role": "user", "content": "Say ready."}], max_tokens=5, note="warm-up")
+            out["qwen"] = "ok"
+        except Exception as exc:
+            out["qwen"] = f"error: {exc!r}"[:160]
     log.info("SIE warm-up: %s", out)
     return out

@@ -1,0 +1,23 @@
+{
+  "voice_id": "EXAVITQu4vr4xnSDxMaL",
+  "voice_name": "Sarah (ElevenLabs)",
+  "model_id": "eleven_multilingual_v2",
+  "scenes": [
+    {"id": "01_title", "visual": "mascot",
+     "text": "This is Capy Care: a calm crew of A.I. agents that does one real job for families. It keeps an aging parent's medications straight."},
+    {"id": "02_problem", "visual": "slide1",
+     "text": "When Mom comes home from the hospital, her discharge papers say lisinopril, five milligrams. Three days later, the new bottle from the pharmacy says ten. Which one is right? In one study, two out of three patients left the hospital with a discrepancy in their medication records."},
+    {"id": "03_crew", "visual": "slide2",
+     "text": "So we built a team of four capybaras. Capy Reader reads everything with Superlinked SIE. Elder Capy remembers every fact, and when it happened, in Cognee. Capy Pharmacist checks the official drug label with Keenable. And Capy Guardian keeps the family in the loop, in a shared Band room."},
+    {"id": "04_demo_conflict", "visual": "demo:docs-ask",
+     "text": "Here it is, running live. Lily shares Mom's discharge papers and a photo of the new bottle. SIE reads each one in about a second: docling for the PDF, LightOn OCR for the photo, and Gliner 2 pulls out every medication and dose, with no LLM. Elder Capy stores each source with its date, and Cognee's conflict review catches it: five milligrams versus ten. The Pharmacist reads the real label, live, through Keenable. Both doses are normal, so the Guardian asks Lily to call the pharmacy before the next dose."},
+    {"id": "05_demo_resolve", "visual": "demo:typing-resolved",
+     "text": "Lily calls, and replies: Dr. Alvarez raised the dose on November tenth. Gliner 2 reads her answer, and Cognee records the family's decision, so it holds on every future review."},
+    {"id": "06_demo_temporal", "visual": "demo:voice-end",
+     "text": "Then her brother Sam sends a voice note: Mom's been dizzy since Wednesday. Whisper on SIE transcribes it in one second. Elder Capy asks Cognee a question about time: what changed right before Wednesday? The dose went up the day before. The official label lists dizziness as a common side effect, so Kwen, running on SIE, writes a one-page brief with three questions for the doctor."},
+    {"id": "07_how", "visual": "slide3",
+     "text": "Under the hood, SIE senses and Cognee remembers. Even Cognee's own language model and embeddings run on Superlinked SIE."},
+    {"id": "08_close", "visual": "close",
+     "text": "Capy Care flags, and never advises. A person makes every call, and the family walks into the doctor's office prepared."}
+  ]
+}
